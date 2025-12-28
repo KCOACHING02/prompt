@@ -57,28 +57,135 @@
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
+            animation: fadeIn 0.5s ease-out;
         }
 
-        .config-section {
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-            padding: 1.5rem;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .config-section h3 {
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            font-weight: 700;
+        /* DIAGNOSTIC SECTION */
+        #diagnosticSection {
+            padding: 2rem 1.5rem;
+        }
+
+        .diagnostic-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .diagnostic-header h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .diagnostic-header p {
             color: var(--text-light);
-            margin-bottom: 1rem;
-            letter-spacing: 0.5px;
+            font-size: 0.9375rem;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .step {
+            width: 40px;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 999px;
+            transition: all 0.3s;
+        }
+
+        .step.active {
+            background: var(--primary);
+        }
+
+        .diagnostic-question {
+            display: none;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        .diagnostic-question.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .question-label {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .profile-options {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-card {
+            background: linear-gradient(135deg, #f9fafb 0%, #f1f5f9 100%);
+            border: 3px solid transparent;
+            border-radius: 16px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .profile-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .profile-card.selected {
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .profile-card .icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-card .title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-card .description {
+            font-size: 0.875rem;
+            opacity: 0.8;
         }
 
         .input-group {
-            margin-bottom: 1rem;
-        }
-
-        .input-group:last-child {
-            margin-bottom: 0;
+            margin-bottom: 1.5rem;
         }
 
         label {
@@ -116,6 +223,85 @@
         textarea {
             resize: vertical;
             min-height: 100px;
+        }
+
+        .hint {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+            font-style: italic;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: var(--text);
+        }
+
+        .btn-secondary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, #ec4899 100%);
+            color: white;
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* GENERATOR SECTION */
+        #generatorSection {
+            display: none;
+        }
+
+        .config-section {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            padding: 1.5rem;
+        }
+
+        .config-section h3 {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .user-info {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .user-info strong {
+            color: var(--primary);
         }
 
         .tabs {
@@ -233,30 +419,6 @@
             overflow-y: auto;
         }
 
-        .hint {
-            font-size: 0.8rem;
-            color: var(--text-light);
-            margin-top: 0.25rem;
-            font-style: italic;
-        }
-
-        /* Animation d'entrée */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .card {
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        /* Responsive optimisations */
         @media (max-width: 640px) {
             body {
                 padding: 0.5rem;
@@ -268,6 +430,18 @@
 
             .header p {
                 font-size: 0.875rem;
+            }
+
+            #diagnosticSection {
+                padding: 1.5rem 1rem;
+            }
+
+            .diagnostic-header h2 {
+                font-size: 1.25rem;
+            }
+
+            .profile-card {
+                padding: 1.25rem;
             }
 
             .config-section {
@@ -287,16 +461,6 @@
                 padding: 0.75rem 0.75rem;
                 min-width: 100px;
             }
-
-            #promptOutput {
-                font-size: 0.8125rem;
-                padding: 1rem;
-            }
-
-            .generate-btn {
-                font-size: 1rem;
-                padding: 1.125rem;
-            }
         }
     </style>
 </head>
@@ -305,102 +469,311 @@
 <div class="container">
     <div class="header">
         <h1>🚀 Générateur de Prompts</h1>
-        <p>Créez des prompts marketing personnalisés en quelques clics</p>
+        <p>Créez des prompts marketing personnalisés</p>
     </div>
 
     <div class="card">
-        <div class="config-section">
-            <h3>⚙️ Configuration de base</h3>
-            
-            <div class="input-group">
-                <label>👥 Avatar Client</label>
-                <select id="avatar">
-                    <option value="Ne s'est pas encore lancé (débutant total)">Débutant total</option>
-                    <option value="Salarié en reconversion">Salarié en reconversion</option>
-                    <option value="Entrepreneur / Freelance en activité">Entrepreneur / Freelance</option>
-                </select>
+        <!-- SECTION DIAGNOSTIC -->
+        <div id="diagnosticSection">
+            <div class="diagnostic-header">
+                <h2>Diagnostic Initial</h2>
+                <p>Commençons par mieux te connaître</p>
             </div>
 
-            <div class="input-group">
-                <label>💼 Type d'offre</label>
-                <select id="offerType">
-                    <option value="une Formation en ligne">Formation en ligne</option>
-                    <option value="un accompagnement en Coaching">Coaching / Consulting</option>
-                    <option value="une Prestation de service">Prestation de service</option>
-                    <option value="un Produit physique">Produit physique / E-commerce</option>
-                </select>
+            <div class="progress-steps">
+                <div class="step active" id="step1"></div>
+                <div class="step" id="step2"></div>
+                <div class="step" id="step3"></div>
+                <div class="step" id="step4"></div>
+                <div class="step" id="step5"></div>
+                <div class="step" id="step6"></div>
+            </div>
+
+            <!-- Question 1 : Profil -->
+            <div class="diagnostic-question active" data-step="1">
+                <label class="question-label">Quel est ton profil actuel ?</label>
+                <div class="profile-options">
+                    <div class="profile-card" onclick="selectProfile(this, 'Salarié')">
+                        <div class="icon">💼</div>
+                        <div class="title">Salarié</div>
+                        <div class="description">Je travaille en entreprise et j'explore le business en ligne</div>
+                    </div>
+                    <div class="profile-card" onclick="selectProfile(this, 'Entrepreneur débutant')">
+                        <div class="icon">🌱</div>
+                        <div class="title">Entrepreneur débutant</div>
+                        <div class="description">Je me suis lancé il y a moins de 2 ans</div>
+                    </div>
+                    <div class="profile-card" onclick="selectProfile(this, 'Entrepreneur expérimenté')">
+                        <div class="icon">🚀</div>
+                        <div class="title">Entrepreneur expérimenté</div>
+                        <div class="description">J'ai plus de 2 ans d'expérience</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 2 : Prénom -->
+            <div class="diagnostic-question" data-step="2">
+                <label class="question-label">Comment t'appelles-tu ?</label>
+                <div class="input-group">
+                    <input type="text" id="userName" placeholder="Ton prénom">
+                    <div class="hint">Pour personnaliser ton expérience</div>
+                </div>
+            </div>
+
+            <!-- Question 3 : Avatar Client -->
+            <div class="diagnostic-question" data-step="3">
+                <label class="question-label">Qui est ton client idéal ?</label>
+                <div class="input-group">
+                    <input type="text" id="avatarClient" placeholder="Ex: Femmes 30-45 ans qui veulent perdre du poids, Entrepreneurs en reconversion...">
+                    <div class="hint">Décris précisément ta cible (âge, situation, problématique)</div>
+                </div>
+            </div>
+
+            <!-- Question 4 : Produit/Service -->
+            <div class="diagnostic-question" data-step="4">
+                <label class="question-label">Que vends-tu ou veux-tu vendre ?</label>
+                <div class="input-group">
+                    <select id="offerType">
+                        <option value="">Sélectionne ton type d'offre</option>
+                        <option value="une Formation en ligne">Formation en ligne</option>
+                        <option value="un accompagnement en Coaching">Coaching / Consulting</option>
+                        <option value="une Prestation de service">Prestation de service (Freelance)</option>
+                        <option value="un Produit physique">Produit physique / E-commerce</option>
+                        <option value="une Infoproduit">Infoproduit (Ebook, Template...)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Question 5 : Niche -->
+            <div class="diagnostic-question" data-step="5">
+                <label class="question-label">Dans quelle thématique ou niche travailles-tu ?</label>
+                <div class="input-group">
+                    <input type="text" id="userNiche" placeholder="Ex: Développement personnel, Marketing, Nutrition...">
+                    <div class="hint">Sois le plus précis possible</div>
+                </div>
+            </div>
+
+            <!-- Question 6 : Ancienneté -->
+            <div class="diagnostic-question" data-step="6">
+                <label class="question-label">Depuis combien de temps travailles-tu sur ce projet ?</label>
+                <div class="input-group">
+                    <select id="experience">
+                        <option value="">Sélectionne une période</option>
+                        <option value="Je n'ai pas encore commencé">Je n'ai pas encore commencé</option>
+                        <option value="Moins de 3 mois">Moins de 3 mois</option>
+                        <option value="3 à 6 mois">3 à 6 mois</option>
+                        <option value="6 mois à 1 an">6 mois à 1 an</option>
+                        <option value="1 à 2 ans">1 à 2 ans</option>
+                        <option value="Plus de 2 ans">Plus de 2 ans</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn btn-secondary" id="prevDiagBtn" onclick="prevDiagnostic()" style="display: none;">← Retour</button>
+                <button class="btn btn-primary" id="nextDiagBtn" onclick="nextDiagnostic()" disabled>Suivant →</button>
             </div>
         </div>
 
-        <div class="tabs">
-            <button class="tab-btn active" onclick="openTab(event, 'tab-bio')">📝 Bio</button>
-            <button class="tab-btn" onclick="openTab(event, 'tab-caption')">✍️ Légendes</button>
-            <button class="tab-btn" onclick="openTab(event, 'tab-hooks')">🎣 Hooks</button>
-        </div>
+        <!-- SECTION GÉNÉRATEUR -->
+        <div id="generatorSection">
+            <div class="config-section">
+                <h3>📊 Ton profil</h3>
+                <div class="user-info" id="userSummary"></div>
+            </div>
 
-        <div id="tab-bio" class="tab-content active">
-            <div class="input-group">
-                <label>Thématique / Niche</label>
-                <input type="text" id="bio-topic" placeholder="Ex: Yoga pour stressés">
-                <div class="hint">Décrivez votre domaine d'expertise</div>
+            <div class="tabs">
+                <button class="tab-btn active" onclick="openTab(event, 'tab-bio')">📝 Bio</button>
+                <button class="tab-btn" onclick="openTab(event, 'tab-caption')">✍️ Légendes</button>
+                <button class="tab-btn" onclick="openTab(event, 'tab-hooks')">🎣 Hooks</button>
             </div>
-            <div class="input-group">
-                <label>Ma Bio Actuelle</label>
-                <textarea id="bio-current" placeholder="Collez votre bio actuelle ici..."></textarea>
-            </div>
-        </div>
 
-        <div id="tab-caption" class="tab-content">
-            <div class="input-group">
-                <label>Sujet du post & Niche</label>
-                <input type="text" id="cap-topic" placeholder="Ex: Pourquoi déléguer son SEO">
-                <div class="hint">Le thème principal de votre publication</div>
+            <div id="tab-bio" class="tab-content active">
+                <div class="input-group">
+                    <label>Ma Bio Actuelle (150 caractères max)</label>
+                    <textarea id="bio-current" placeholder="Colle ta bio Instagram/LinkedIn ici..." maxlength="150"></textarea>
+                    <div class="hint">⚠️ Maximum 150 caractères - Si tu n'en as pas encore, laisse vide</div>
+                </div>
             </div>
-            <div class="input-group">
-                <label>Méthode Copywriting</label>
-                <select id="cap-method">
-                    <option value="AIDA">AIDA (Classique)</option>
-                    <option value="PAS">PAS (Résolution de problème)</option>
-                    <option value="Storytelling">Storytelling (Émotionnel)</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label>🎯 Mots-clés SEO</label>
-                <input type="text" id="cap-seo" placeholder="Ex: marketing digital, freelance">
-                <div class="hint">Séparez les mots-clés par des virgules</div>
-            </div>
-        </div>
 
-        <div id="tab-hooks" class="tab-content">
-            <div class="input-group">
-                <label>Sujet de l'accroche</label>
-                <input type="text" id="hook-topic" placeholder="Ex: Les erreurs des débutants en SEO">
+            <div id="tab-caption" class="tab-content">
+                <div class="input-group">
+                    <label>Sujet du post</label>
+                    <input type="text" id="cap-topic" placeholder="Ex: Pourquoi déléguer son SEO quand on est coach">
+                    <div class="hint">Le thème principal de ta publication</div>
+                </div>
+                <div class="input-group">
+                    <label>Méthode Copywriting</label>
+                    <select id="cap-method">
+                        <option value="AIDA">AIDA (Classique)</option>
+                        <option value="PAS">PAS (Résolution de problème)</option>
+                        <option value="Storytelling">Storytelling (Émotionnel)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>🎯 Mots-clés SEO (optionnel)</label>
+                    <input type="text" id="cap-seo" placeholder="Ex: marketing digital, freelance">
+                    <div class="hint">Sépare les mots-clés par des virgules</div>
+                </div>
             </div>
-            <div class="input-group">
-                <label>Angle Psychologique</label>
-                <select id="hook-angle">
-                    <option value="Curiosité">Curiosité</option>
-                    <option value="Urgence / FOMO">Urgence / FOMO</option>
-                    <option value="Casser un mythe">Contre-intuitif</option>
-                </select>
-            </div>
-        </div>
 
-        <div style="padding: 0 1.5rem 1.5rem;">
-            <button class="generate-btn" onclick="buildPrompt()">Générer mon Prompt ✨</button>
-        </div>
-
-        <div id="resultArea">
-            <div class="result-header">
-                <h3>📋 Votre prompt est prêt</h3>
-                <button class="copy-btn" onclick="copyToClipboard()">Copier</button>
+            <div id="tab-hooks" class="tab-content">
+                <div class="input-group">
+                    <label>Sujet de l'accroche</label>
+                    <input type="text" id="hook-topic" placeholder="Ex: Les erreurs des débutants en SEO">
+                </div>
+                <div class="input-group">
+                    <label>Angle Psychologique</label>
+                    <select id="hook-angle">
+                        <option value="Curiosité">Curiosité</option>
+                        <option value="Urgence / FOMO">Urgence / FOMO</option>
+                        <option value="Casser un mythe">Contre-intuitif</option>
+                    </select>
+                </div>
             </div>
-            <div id="promptOutput"></div>
+
+            <div style="padding: 0 1.5rem 1.5rem;">
+                <button class="generate-btn" onclick="buildPrompt()">Générer mon Prompt ✨</button>
+            </div>
+
+            <div id="resultArea">
+                <div class="result-header">
+                    <h3>📋 Votre prompt est prêt</h3>
+                    <button class="copy-btn" onclick="copyToClipboard()">Copier</button>
+                </div>
+                <div id="promptOutput"></div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
+    let currentStep = 1;
+    const totalSteps = 6;
+    const userData = {
+        profile: '',
+        name: '',
+        avatar: '',
+        offer: '',
+        niche: '',
+        experience: ''
+    };
+
+    function selectProfile(element, profile) {
+        document.querySelectorAll('.profile-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+        element.classList.add('selected');
+        userData.profile = profile;
+        document.getElementById('nextDiagBtn').disabled = false;
+    }
+
+    function nextDiagnostic() {
+        // Validation
+        if (currentStep === 1 && !userData.profile) {
+            alert('⚠️ Veuillez sélectionner un profil');
+            return;
+        }
+        if (currentStep === 2) {
+            const name = document.getElementById('userName').value.trim();
+            if (!name) {
+                alert('⚠️ Veuillez entrer votre prénom');
+                return;
+            }
+            userData.name = name;
+        }
+        if (currentStep === 3) {
+            const avatar = document.getElementById('avatarClient').value.trim();
+            if (!avatar) {
+                alert('⚠️ Veuillez décrire votre client idéal');
+                return;
+            }
+            userData.avatar = avatar;
+        }
+        if (currentStep === 4) {
+            const offer = document.getElementById('offerType').value;
+            if (!offer) {
+                alert('⚠️ Veuillez sélectionner votre type d\'offre');
+                return;
+            }
+            userData.offer = offer;
+        }
+        if (currentStep === 5) {
+            const niche = document.getElementById('userNiche').value.trim();
+            if (!niche) {
+                alert('⚠️ Veuillez indiquer votre niche');
+                return;
+            }
+            userData.niche = niche;
+        }
+        if (currentStep === 6) {
+            const exp = document.getElementById('experience').value;
+            if (!exp) {
+                alert('⚠️ Veuillez sélectionner votre ancienneté');
+                return;
+            }
+            userData.experience = exp;
+            completeDiagnostic();
+            return;
+        }
+
+        currentStep++;
+        updateDiagnosticView();
+    }
+
+    function prevDiagnostic() {
+        if (currentStep > 1) {
+            currentStep--;
+            updateDiagnosticView();
+        }
+    }
+
+    function updateDiagnosticView() {
+        // Mettre à jour les questions
+        document.querySelectorAll('.diagnostic-question').forEach(q => {
+            q.classList.remove('active');
+        });
+        document.querySelector(`[data-step="${currentStep}"]`).classList.add('active');
+
+        // Mettre à jour les steps
+        for (let i = 1; i <= totalSteps; i++) {
+            const step = document.getElementById(`step${i}`);
+            if (i <= currentStep) {
+                step.classList.add('active');
+            } else {
+                step.classList.remove('active');
+            }
+        }
+
+        // Gérer les boutons
+        document.getElementById('prevDiagBtn').style.display = currentStep === 1 ? 'none' : 'block';
+        document.getElementById('nextDiagBtn').disabled = false;
+        
+        // Changer le texte du bouton à la dernière étape
+        if (currentStep === totalSteps) {
+            document.getElementById('nextDiagBtn').textContent = 'Commencer 🚀';
+        } else {
+            document.getElementById('nextDiagBtn').textContent = 'Suivant →';
+        }
+    }
+
+    function completeDiagnostic() {
+        // Afficher le résumé
+        const summary = `
+            <strong>Profil :</strong> ${userData.profile}<br>
+            <strong>Prénom :</strong> ${userData.name}<br>
+            <strong>Client idéal :</strong> ${userData.avatar}<br>
+            <strong>Offre :</strong> ${userData.offer}<br>
+            <strong>Niche :</strong> ${userData.niche}<br>
+            <strong>Expérience :</strong> ${userData.experience}
+        `;
+        document.getElementById('userSummary').innerHTML = summary;
+
+        // Basculer vers le générateur
+        document.getElementById('diagnosticSection').style.display = 'none';
+        document.getElementById('generatorSection').style.display = 'block';
+    }
+
     function openTab(evt, tabName) {
         const contents = document.getElementsByClassName("tab-content");
         for (let i = 0; i < contents.length; i++) {
@@ -415,25 +788,51 @@
     }
 
     function buildPrompt() {
-        const avatar = document.getElementById('avatar').value;
-        const offer = document.getElementById('offerType').value;
         const activeTab = document.querySelector('.tab-content.active').id;
         
-        let context = `Agis en tant qu'expert en marketing et copywriting. Ma cible est : ${avatar}. Je souhaite promouvoir ${offer}. La longueur du texte doit être moyenne.\n\n`;
+        let context = `Tu es un expert en marketing et copywriting. Voici mon profil :
+- Je suis ${userData.profile}
+- Mon client idéal : ${userData.avatar}
+- Je travaille dans la niche : ${userData.niche}
+- Je propose ${userData.offer}
+- Ancienneté du projet : ${userData.experience}
+
+`;
         let prompt = '';
 
         if (activeTab === 'tab-bio') {
-            const topic = document.getElementById('bio-topic').value;
             const current = document.getElementById('bio-current').value;
             
-            if (!topic || !current) {
-                alert('⚠️ Veuillez remplir tous les champs');
-                return;
+            if (current) {
+                prompt = `${context}Analyse ma bio actuelle : "${current}".
+
+CONTRAINTE ABSOLUE : La bio ne doit PAS dépasser 150 caractères.
+
+Réécris-la pour qu'elle :
+1. Attire immédiatement mon audience idéale (${userData.avatar})
+2. Communique clairement la valeur que j'apporte
+3. Convertisse les visiteurs en abonnés puis en clients
+4. Positionne mon offre de manière irrésistible
+5. Incite à l'action (suivre, DM, cliquer sur le lien)
+
+Propose 3 variantes avec des angles différents (autorité, transformation, curiosité).`;
+            } else {
+                prompt = `${context}Je n'ai pas encore de bio. Crée-moi 3 bios Instagram/LinkedIn percutantes.
+
+CONTRAINTE ABSOLUE : Chaque bio ne doit PAS dépasser 150 caractères.
+
+Chaque bio doit :
+1. Attirer immédiatement mon audience idéale (${userData.avatar})
+2. Communiquer clairement la valeur que j'apporte
+3. Convertir les visiteurs en abonnés puis en clients
+4. Positionner mon offre de manière irrésistible
+5. Inciter à l'action (suivre, DM, cliquer sur le lien)
+
+Propose 3 variantes avec des angles différents :
+- Variante 1 : Angle autorité/expertise
+- Variante 2 : Angle transformation/résultat
+- Variante 3 : Angle curiosité/storytelling`;
             }
-            
-            prompt = `${context}Analyse ma bio actuelle : "${current}".
-Réécris-la pour qu'elle soit optimisée pour ma niche (${topic}) et qu'elle attire ma cible. 
-La bio doit clairement diriger vers ${offer}. Propose 3 variantes.`;
         } 
         else if (activeTab === 'tab-caption') {
             const topic = document.getElementById('cap-topic').value;
@@ -448,7 +847,9 @@ La bio doit clairement diriger vers ${offer}. Propose 3 variantes.`;
             prompt = `${context}Rédige une légende Instagram/LinkedIn sur le sujet : "${topic}".
 Utilise la méthode ${method}.
 ${seo ? `IMPORTANT : Intègre naturellement les mots-clés SEO suivants : ${seo}.` : ''}
-Le vocabulaire doit être spécifique à ma niche et valoriser ${offer}. Termine par un appel à l'action puissant.`;
+Le vocabulaire doit être spécifique à ma niche et valoriser mon offre. 
+Adapte le ton à mon profil (${userData.profile}) et parle directement à mon avatar client (${userData.avatar}). 
+Termine par un appel à l'action puissant qui convertit.`;
         }
         else if (activeTab === 'tab-hooks') {
             const topic = document.getElementById('hook-topic').value;
@@ -460,14 +861,18 @@ Le vocabulaire doit être spécifique à ma niche et valoriser ${offer}. Termine
             }
             
             prompt = `${context}Génère 5 hooks percutants pour un contenu sur "${topic}".
-Angle : ${angle}.
-Assure-toi que ces accroches parlent directement aux douleurs de mon avatar (${avatar}) et préparent le terrain pour présenter ${offer}.`;
+Angle psychologique : ${angle}.
+Les hooks doivent :
+- Parler directement aux douleurs de mon avatar client (${userData.avatar})
+- Créer une connexion émotionnelle forte
+- Préparer le terrain pour présenter mon offre
+- Être adaptés aux réseaux sociaux (courts et impactants)
+- Donner envie de lire la suite et d'interagir`;
         }
 
         document.getElementById('promptOutput').innerText = prompt;
         document.getElementById('resultArea').style.display = 'block';
         
-        // Scroll vers le résultat (smooth scroll)
         setTimeout(() => {
             document.getElementById('resultArea').scrollIntoView({ 
                 behavior: 'smooth', 
@@ -493,6 +898,11 @@ Assure-toi que ces accroches parlent directement aux douleurs de mon avatar (${a
             alert('Erreur lors de la copie. Veuillez copier manuellement.');
         });
     }
+
+    // Validation en temps réel pour la question 2
+    document.getElementById('userName')?.addEventListener('input', function(e) {
+        document.getElementById('nextDiagBtn').disabled = !e.target.value.trim();
+    });
 </script>
 
 </body>
