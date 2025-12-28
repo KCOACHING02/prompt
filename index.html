@@ -3,55 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur de Prompts - Marketing Digital</title>
+    <title>Générateur de Prompts - Multi-Offres</title>
     <style>
-        :root {
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
-        }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.5; margin: 0; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; }
-        .card { background: var(--card); padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        
-        /* Tabs */
+        :root { --primary: #6366f1; --primary-hover: #4f46e5; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.5; padding: 20px; }
+        .container { max-width: 850px; margin: 0 auto; }
+        .card { background: var(--card); padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; }
-        .tab-btn { padding: 10px 20px; border: none; background: none; cursor: pointer; font-weight: 600; color: #64748b; border-bottom: 2px solid transparent; transition: 0.3s; }
+        .tab-btn { padding: 10px 20px; border: none; background: none; cursor: pointer; font-weight: 600; color: #64748b; border-bottom: 2px solid transparent; }
         .tab-btn.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-
-        /* Form elements */
-        label { display: block; margin-top: 15px; font-weight: 600; font-size: 0.9rem; }
-        input, textarea, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
-        .common-fields { background: #f1f5f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
-        
-        button.generate { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; width: 100%; font-size: 1rem; font-weight: bold; margin-top: 20px; transition: 0.3s; }
-        button.generate:hover { background: var(--primary-hover); }
-
-        /* Result */
-        #resultArea { margin-top: 30px; display: none; border-top: 2px solid #e2e8f0; padding-top: 20px; }
-        #promptOutput { background: #1e293b; color: #f8fafc; padding: 20px; border-radius: 8px; white-space: pre-wrap; font-family: monospace; font-size: 0.95rem; position: relative; }
-        .copy-btn { background: #10b981; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin-top: 10px; float: right; }
+        label { display: block; margin-top: 15px; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; color: #475569; }
+        input, textarea, select { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
+        .config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #f1f5f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        button.generate { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 6px; cursor: pointer; width: 100%; font-size: 1rem; font-weight: bold; margin-top: 20px; }
+        #resultArea { margin-top: 30px; border-top: 2px solid #e2e8f0; padding-top: 20px; display: none; }
+        #promptOutput { background: #1e293b; color: #f8fafc; padding: 20px; border-radius: 8px; white-space: pre-wrap; font-family: monospace; }
+        .copy-btn { background: #10b981; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; float: right; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="card">
-        <h1>🚀 Prompt Creator Pro</h1>
-        <p>Générez des prompts haute conversion pour vos formations.</p>
-
-        <div class="common-fields">
-            <label>👥 Avatar Client Idéal</label>
-            <select id="avatar">
-                <option value="Salarié en reconversion cherchant à quitter son 9-5">Salarié en reconversion</option>
-                <option value="Entrepreneur débutant qui stagne dans ses revenus">Entrepreneur débutant</option>
-                <option value="Freelance souhaitant scaler son activité">Freelance Expert</option>
-                <option value="Créateur de contenu souhaitant monétiser son audience">Créateur de contenu</option>
-            </select>
+        <h1>🚀 Multi-Prompt Generator</h1>
+        
+        <div class="config-grid">
+            <div>
+                <label>👥 Avatar Client</label>
+                <select id="avatar">
+                    <option value="Ne s'est pas encore lancé (débutant total)">Ne s'est pas encore lancé</option>
+                    <option value="Salarié en reconversion">Salarié en reconversion</option>
+                    <option value="Entrepreneur / Freelance en activité">Entrepreneur / Freelance</option>
+                </select>
+            </div>
+            <div>
+                <label>💼 Type d'offre</label>
+                <select id="offerType">
+                    <option value="une Formation en ligne">Formation en ligne</option>
+                    <option value="un accompagnement en Coaching">Coaching / Consulting</option>
+                    <option value="une Prestation de service">Prestation de service (Freelance)</option>
+                    <option value="un Produit physique">Produit physique / E-commerce</option>
+                </select>
+            </div>
         </div>
 
         <div class="tabs">
@@ -61,42 +56,41 @@
         </div>
 
         <div id="tab-bio" class="tab-content active">
-            <label>Ta BIO actuelle</label>
-            <textarea id="bio-current" rows="2" placeholder="Copie ici ta bio Instagram/LinkedIn..."></textarea>
-            <label>Thématique précise</label>
-            <input type="text" id="bio-topic" placeholder="Ex: SEO pour e-commerce, Cryptomonnaies...">
-            <label>Lien / Appel à l'action (Optionnel)</label>
-            <input type="text" id="bio-link" placeholder="Lien vers ta formation ou lead magnet">
+            <label>Ma Thématique / Niche</label>
+            <input type="text" id="bio-topic" placeholder="Ex: Yoga pour stressés, Montage vidéo CapCut...">
+            <label>Ma Bio Actuelle</label>
+            <textarea id="bio-current" rows="2"></textarea>
         </div>
 
         <div id="tab-caption" class="tab-content">
-            <label>Sujet du post</label>
-            <textarea id="cap-topic" rows="2" placeholder="De quoi parle ton post ?"></textarea>
-            <label>Méthode de Copywriting</label>
+            <label>Sujet du post & Niche</label>
+            <input type="text" id="cap-topic" placeholder="Ex: Pourquoi déléguer son SEO quand on est coach">
+            <label>Méthode Copywriting</label>
             <select id="cap-method">
-                <option value="AIDA (Attention, Intérêt, Désir, Action)">AIDA</option>
-                <option value="PAS (Problème, Agitation, Solution)">PAS</option>
-                <option value="Storytelling (Narration émotionnelle)">Storytelling</option>
+                <option value="AIDA">AIDA (Classique)</option>
+                <option value="PAS">PAS (Résolution de problème)</option>
+                <option value="Storytelling">Storytelling (Émotionnel)</option>
             </select>
+            <label>🎯 Mots-clés SEO (à inclure obligatoirement)</label>
+            <input type="text" id="cap-seo" placeholder="Ex: marketing digital, gagner du temps, freelance...">
         </div>
 
         <div id="tab-hooks" class="tab-content">
-            <label>Sujet de la vidéo/post</label>
-            <input type="text" id="hook-topic" placeholder="Ex: 3 astuces pour doubler ses ventes">
-            <label>Angle psychologique (Option)</label>
+            <label>Sujet de l'accroche</label>
+            <input type="text" id="hook-topic">
+            <label>Angle Psychologique</label>
             <select id="hook-angle">
-                <option value="Curiosité (mystère, secret révélé)">Curiosité</option>
-                <option value="FOMO (peur de manquer, urgence)">FOMO / Urgence</option>
-                <option value="Gain Rapide (promesse de résultat direct)">Gain Rapide</option>
-                <option value="Contre-intuitif (casser une croyance)">Contre-intuitif</option>
+                <option value="Curiosité">Curiosité</option>
+                <option value="Urgence / FOMO">Urgence / FOMO</option>
+                <option value="Casser un mythe">Contre-intuitif</option>
             </select>
         </div>
 
-        <button class="generate" onclick="buildPrompt()">Générer le Prompt ✨</button>
+        <button class="generate" onclick="buildPrompt()">Générer mon Prompt Personnalisé ✨</button>
 
         <div id="resultArea">
             <button class="copy-btn" onclick="copyToClipboard()">Copier</button>
-            <h3>Ton Prompt :</h3>
+            <h3>Copiez ce prompt dans votre IA :</h3>
             <div id="promptOutput"></div>
         </div>
     </div>
@@ -105,46 +99,42 @@
 <script>
     function openTab(evt, tabName) {
         let contents = document.getElementsByClassName("tab-content");
-        for (let i = 0; i < contents.length; i++) contents[i].className = "tab-content";
-        
+        for (let i = 0; i < contents.length; i++) contents[i].classList.remove("active");
         let buttons = document.getElementsByClassName("tab-btn");
-        for (let i = 0; i < buttons.length; i++) buttons[i].className = "tab-btn";
-        
-        document.getElementById(tabName).className = "tab-content active";
-        evt.currentTarget.className = "tab-btn active";
+        for (let i = 0; i < buttons.length; i++) buttons[i].classList.remove("active");
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
     }
 
     function buildPrompt() {
         const avatar = document.getElementById('avatar').value;
+        const offer = document.getElementById('offerType').value;
         const activeTab = document.querySelector('.tab-content.active').id;
-        let prompt = "";
-
-        const baseContext = `Agis en tant qu'expert en marketing digital et copywriting de haut niveau. Ma cible est : ${avatar}. La longueur du texte doit être moyenne.\n\n`;
+        
+        let context = `Agis en tant qu'expert en marketing et copywriting. Ma cible est : ${avatar}. Je souhaite promouvoir ${offer}. La longueur du texte doit être moyenne.\n\n`;
 
         if (activeTab === 'tab-bio') {
-            const current = document.getElementById('bio-current').value;
             const topic = document.getElementById('bio-topic').value;
-            const link = document.getElementById('bio-link').value;
-            prompt = `${baseContext}Analyse et réécris ma bio Instagram/LinkedIn pour maximiser les conversions en formation.
-Thématique : ${topic}
-Bio actuelle : "${current}"
-Destination du lien : ${link || "Non précisé"}
-
-Propose-moi 3 versions : une directe, une basée sur l'autorité et une créative.`;
-
-        } else if (activeTab === 'tab-caption') {
+            const current = document.getElementById('bio-current').value;
+            prompt = `${context}Analyse ma bio actuelle : "${current}".
+Réécris-la pour qu'elle soit optimisée pour ma niche (${topic}) et qu'elle attire ma cible. 
+La bio doit clairement diriger vers ${offer}. Propose 3 variantes.`;
+        } 
+        else if (activeTab === 'tab-caption') {
             const topic = document.getElementById('cap-topic').value;
             const method = document.getElementById('cap-method').value;
-            prompt = `${baseContext}Rédige une légende captivante pour un post sur le sujet suivant : "${topic}".
-Utilise la méthode de copywriting : ${method}.
-Inclus des emojis pertinents et un appel à l'action clair pour ma formation.`;
-
-        } else if (activeTab === 'tab-hooks') {
+            const seo = document.getElementById('cap-seo').value;
+            prompt = `${context}Rédige une légende Instagram/LinkedIn sur le sujet : "${topic}".
+Utilise la méthode ${method}.
+IMPORTANT : Intègre naturellement les mots-clés SEO suivants : ${seo}.
+Le vocabulaire doit être spécifique à ma niche et valoriser ${offer}. Termine par un appel à l'action puissant.`;
+        }
+        else if (activeTab === 'tab-hooks') {
             const topic = document.getElementById('hook-topic').value;
             const angle = document.getElementById('hook-angle').value;
-            prompt = `${baseContext}Génère 5 hooks (accroches) puissants pour une vidéo courte (Reels/TikTok) sur le sujet : "${topic}".
-L'angle psychologique à utiliser est : ${angle}.
-Les hooks doivent être courts, percutants et donner envie de regarder la suite immédiatement.`;
+            prompt = `${context}Génère 5 hooks percutants pour un contenu sur "${topic}".
+Angle : ${angle}.
+Assure-toi que ces accroches parlent directement aux douleurs de mon avatar (${avatar}) et préparent le terrain pour présenter ${offer}.`;
         }
 
         document.getElementById('promptOutput').innerText = prompt;
@@ -154,7 +144,7 @@ Les hooks doivent être courts, percutants et donner envie de regarder la suite 
     function copyToClipboard() {
         const text = document.getElementById('promptOutput').innerText;
         navigator.clipboard.writeText(text);
-        alert("Prompt copié dans le presse-papier !");
+        alert("Prompt copié !");
     }
 </script>
 
