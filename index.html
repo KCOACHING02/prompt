@@ -431,11 +431,64 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .result-header h3 {
             font-size: 1rem;
             color: var(--text);
+            flex: 1;
+        }
+
+        .ai-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            width: 100%;
+        }
+
+        .ai-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .ai-btn-chatgpt {
+            background: linear-gradient(135deg, #10a37f 0%, #1a7f64 100%);
+            color: white;
+        }
+
+        .ai-btn-claude {
+            background: linear-gradient(135deg, #d97757 0%, #c1624a 100%);
+            color: white;
+        }
+
+        .ai-btn-gemini {
+            background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+            color: white;
+        }
+
+        .ai-btn-copilot {
+            background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
+            color: white;
+        }
+
+        .ai-btn:active {
+            transform: scale(0.97);
+        }
+
+        .ai-icon {
+            font-size: 1.125rem;
         }
 
         .result-footer {
@@ -731,9 +784,18 @@
 
             <div id="resultArea">
                 <div class="result-header">
-                    <h3>📋 Votre prompt est prêt</h3>
-                    <button class="copy-btn" onclick="copyToClipboard()">Copier</button>
+                    <h3>🚀 Choisis ton IA préférée</h3>
                 </div>
+                
+                <div class="ai-buttons" id="aiButtons"></div>
+                
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <p style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 0.75rem;">
+                        Ou copie le prompt manuellement :
+                    </p>
+                    <button class="copy-btn" onclick="copyToClipboard()">📋 Copier le Prompt</button>
+                </div>
+                
                 <div id="promptOutput"></div>
                 
                 <div class="result-footer">
@@ -893,20 +955,14 @@
     function buildPrompt() {
         const activeTab = document.querySelector('.tab-content.active').id;
         
-        let context = `Tu es un expert en marketing et copywriting. Voici mon profil :
-- Je suis ${userData.profile}
-- Mon client idéal : ${userData.avatar}
-- Je travaille dans la niche : ${userData.niche}
-- Je propose ${userData.offer}
-- Ancienneté du projet : ${userData.experience}
-
-`;
         let prompt = '';
 
         if (activeTab === 'tab-bio') {
             const current = document.getElementById('bio-current').value;
             
             const bioPrompt = `PROMPT AUDIT DE TA BIO
+
+À COPIER / COLLER avec un screen de ta bio dans ChatGPT :
 
 Checklist pour l'audit
 Nom - Optimisation SEO, Niche, Activité :
@@ -946,7 +1002,13 @@ CONSIGNES :
                 return;
             }
             
-            prompt = `${context}Rédige une légende Instagram/LinkedIn sur le sujet : "${topic}".
+            prompt = `Tu es un expert en marketing et copywriting. Voici mon profil :
+- Je suis ${userData.profile}
+- Mon client idéal : ${userData.avatar}
+- Je travaille dans la niche : ${userData.niche}
+- Je propose ${userData.offer}
+
+Rédige une légende Instagram/LinkedIn sur le sujet : "${topic}".
 Utilise la méthode ${method}.
 ${seo ? `IMPORTANT : Intègre naturellement les mots-clés SEO suivants : ${seo}.` : ''}
 Le vocabulaire doit être spécifique à ma niche et valoriser mon offre. 
@@ -962,7 +1024,7 @@ Termine par un appel à l'action puissant qui convertit.`;
                 return;
             }
             
-            const hookPrompt = `PROMPT ULTIME :
+            const hookPrompt = `PROMPT ULTIME : 100 Hooks pour Éclater les Réseaux en 2025, toutes niches confondues.
 
 Chaque hook doit :
 
@@ -1000,7 +1062,7 @@ MON PROFIL :
 - Je suis : ${userData.profile}
 
 CONSIGNES :
-1. Génère 10 hooks ultra-percutants
+1. Génère 10 hooks ultra-percutants (pas 100, trop long)
 2. Chaque hook doit parler directement aux douleurs de mon avatar
 3. Adapte les hooks à ma niche spécifique
 4. Varie les styles et mécanismes psychologiques
@@ -1010,6 +1072,10 @@ CONSIGNES :
         }
 
         document.getElementById('promptOutput').innerText = prompt;
+        
+        // Créer les boutons IA avec liens directs
+        createAIButtons(prompt);
+        
         document.getElementById('resultArea').style.display = 'block';
         
         setTimeout(() => {
@@ -1018,6 +1084,50 @@ CONSIGNES :
                 block: 'nearest' 
             });
         }, 100);
+    }
+
+    function createAIButtons(prompt) {
+        const encodedPrompt = encodeURIComponent(prompt);
+        const aiButtonsContainer = document.getElementById('aiButtons');
+        
+        const aiLinks = [
+            {
+                name: 'ChatGPT',
+                icon: '🤖',
+                class: 'ai-btn-chatgpt',
+                url: `https://chat.openai.com/?q=${encodedPrompt}`
+            },
+            {
+                name: 'Claude',
+                icon: '🧠',
+                class: 'ai-btn-claude',
+                url: `https://claude.ai/new?q=${encodedPrompt}`
+            },
+            {
+                name: 'Gemini',
+                icon: '✨',
+                class: 'ai-btn-gemini',
+                url: `https://gemini.google.com/app?q=${encodedPrompt}`
+            },
+            {
+                name: 'Copilot',
+                icon: '🚀',
+                class: 'ai-btn-copilot',
+                url: `https://copilot.microsoft.com/?q=${encodedPrompt}`
+            }
+        ];
+        
+        aiButtonsContainer.innerHTML = aiLinks.map(ai => `
+            <a href="${ai.url}" class="ai-btn ${ai.class}" target="_blank" onclick="trackAIClick('${ai.name}')">
+                <span class="ai-icon">${ai.icon}</span>
+                <span>${ai.name}</span>
+            </a>
+        `).join('');
+    }
+
+    function trackAIClick(aiName) {
+        console.log(`Utilisateur a choisi : ${aiName}`);
+        // Ici tu peux ajouter du tracking analytics si besoin
     }
 
     function copyToClipboard() {
