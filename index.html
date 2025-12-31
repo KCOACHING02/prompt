@@ -34,16 +34,16 @@
         .card { background: var(--card); border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
         #diagnosticSection { padding: 2rem 1.5rem; }
         .progress-steps { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 2rem; }
-        .step { width: 40px; height: 4px; background: #e2e8f0; border-radius: 999px; transition: 0.3s; }
+        .step { width: 50px; height: 4px; background: #e2e8f0; border-radius: 999px; transition: 0.3s; }
         .step.active { background: var(--primary); }
         .diagnostic-question { display: none; }
         .diagnostic-question.active { display: block; }
-        .profile-options { display: grid; gap: 1rem; margin-bottom: 2rem; }
-        .profile-card {
-            background: #f9fafb; border: 3px solid transparent; border-radius: 16px; padding: 1.5rem;
-            cursor: pointer; transition: 0.3s;
+        .choice-options { display: grid; gap: 1rem; margin-bottom: 2rem; }
+        .choice-card {
+            background: #f9fafb; border: 3px solid transparent; border-radius: 16px; padding: 1.25rem;
+            cursor: pointer; transition: 0.3s; font-weight: 600; text-align: center;
         }
-        .profile-card.selected { background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%); color: white; }
+        .choice-card.selected { background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%); color: white; }
         .input-group { margin-bottom: 1.5rem; }
         label { display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.5rem; }
         input, textarea, select {
@@ -53,9 +53,6 @@
         .btn { flex: 1; padding: 1rem; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
         .btn-primary { background: linear-gradient(135deg, var(--primary) 0%, #ec4899 100%); color: white; }
         #generatorSection { display: none; }
-        .tabs { display: flex; background: #f1f5f9; padding: 0.5rem; overflow-x: auto; }
-        .tab-btn { flex: 1; min-width: 100px; padding: 0.875rem; border: none; background: transparent; cursor: pointer; font-weight: 600; }
-        .tab-btn.active { background: white; color: var(--primary); border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .tab-content { padding: 1.5rem; display: none; }
         .tab-content.active { display: block; }
         .generate-btn { width: 100%; background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); color: white; border: none; padding: 1.25rem; border-radius: 12px; font-size: 1.125rem; font-weight: 700; cursor: pointer; }
@@ -64,6 +61,7 @@
         .ai-btn { display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.875rem; border-radius: 10px; color: white; text-decoration: none; font-weight: 600; font-size: 0.875rem; }
         #promptOutput { background: #1e293b; color: #f8fafc; padding: 1.25rem; border-radius: 12px; white-space: pre-wrap; font-family: monospace; font-size: 0.875rem; max-height: 400px; overflow-y: auto; }
         .copy-btn { background: var(--success); color: white; border: none; padding: 0.625rem 1.25rem; border-radius: 8px; cursor: pointer; font-weight: 600; margin-bottom: 1rem; }
+        .back-btn { display: block; margin: 1rem auto; background: none; border: none; color: var(--text-light); text-decoration: underline; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -78,46 +76,35 @@
     <div class="card">
         <div id="diagnosticSection">
             <div class="progress-steps">
-                <div class="step active" id="step1"></div><div class="step" id="step2"></div><div class="step" id="step3"></div>
-                <div class="step" id="step4"></div><div class="step" id="step5"></div><div class="step" id="step6"></div>
+                <div class="step active" id="step1"></div><div class="step" id="step2"></div><div class="step" id="step3"></div><div class="step" id="step4"></div>
             </div>
 
             <div class="diagnostic-question active" data-step="1">
-                <label class="question-label">Quel est ton profil actuel ?</label>
-                <div class="profile-options">
-                    <div class="profile-card" onclick="selectProfile(this, 'Salarié')">💼 Salarié</div>
-                    <div class="profile-card" onclick="selectProfile(this, 'Entrepreneur débutant')">🌱 Entrepreneur débutant</div>
-                    <div class="profile-card" onclick="selectProfile(this, 'Entrepreneur expérimenté')">🚀 Entrepreneur expérimenté</div>
-                </div>
+                <label class="question-label">Qui est ton client idéal ?</label>
+                <input type="text" id="avatarClient" placeholder="Ex: Femmes 30-45 ans..." oninput="checkInput()">
             </div>
             <div class="diagnostic-question" data-step="2">
-                <label class="question-label">Comment t'appelles-tu ?</label>
-                <input type="text" id="userName" placeholder="Ton prénom">
-            </div>
-            <div class="diagnostic-question" data-step="3">
-                <label class="question-label">Qui est ton client idéal ?</label>
-                <input type="text" id="avatarClient" placeholder="Ex: Femmes 30-45 ans...">
-            </div>
-            <div class="diagnostic-question" data-step="4">
                 <label class="question-label">Que vends-tu ?</label>
-                <select id="offerType">
+                <select id="offerType" onchange="checkInput()">
                     <option value="">Sélectionne</option>
                     <option value="une Formation en ligne">Formation en ligne</option>
                     <option value="un Coaching">Coaching</option>
                     <option value="une Prestation">Prestation</option>
+                    <option value="autre">Autre</option>
                 </select>
             </div>
-            <div class="diagnostic-question" data-step="5">
+            <div class="diagnostic-question" data-step="3">
                 <label class="question-label">Ta niche ?</label>
-                <input type="text" id="userNiche" placeholder="Thématique...">
+                <input type="text" id="userNiche" placeholder="Thématique..." oninput="checkInput()">
             </div>
-            <div class="diagnostic-question" data-step="6">
-                <label class="question-label">Ancienneté ?</label>
-                <select id="experience">
-                    <option value="">Sélectionne</option>
-                    <option value="Débutant">Moins de 6 mois</option>
-                    <option value="Expert">Plus de 2 ans</option>
-                </select>
+            <div class="diagnostic-question" data-step="4">
+                <label class="question-label">Que souhaites-tu faire aujourd'hui ?</label>
+                <div class="choice-options">
+                    <div class="choice-card" onclick="selectTool(this, 'tab-bio')">📝 Auditer ma Bio</div>
+                    <div class="choice-card" onclick="selectTool(this, 'tab-hooks')">🎣 Créer des Hooks</div>
+                    <div class="choice-card" onclick="selectTool(this, 'tab-caption')">✍️ Créer des Légendes</div>
+                    <div class="choice-card" onclick="selectTool(this, 'tab-reels')">🎥 Idées Reels/Carrousel</div>
+                </div>
             </div>
 
             <div class="nav-buttons">
@@ -127,14 +114,7 @@
         </div>
 
         <div id="generatorSection">
-            <div class="tabs">
-                <button class="tab-btn active" onclick="openTab(event, 'tab-bio')">📝 Bio</button>
-                <button class="tab-btn" onclick="openTab(event, 'tab-caption')">✍️ Légendes</button>
-                <button class="tab-btn" onclick="openTab(event, 'tab-hooks')">🎣 Hooks</button>
-                <button class="tab-btn" onclick="openTab(event, 'tab-reels')">🎥 Idées Reels/Carrousel</button>
-            </div>
-
-            <div id="tab-bio" class="tab-content active">
+            <div id="tab-bio" class="tab-content">
                 <div class="input-group">
                     <label>Ma Bio Actuelle</label>
                     <textarea id="bio-current" placeholder="Colle ta bio ici..."></textarea>
@@ -143,8 +123,8 @@
 
             <div id="tab-caption" class="tab-content">
                 <div class="input-group">
-                    <label>Sujet précis du reel</label>
-                    <input type="text" id="cap-topic" placeholder="De quoi parle ton reel ?">
+                    <label>Ton Hook (Accroche du Reel)</label>
+                    <input type="text" id="cap-hook-planned" placeholder="Quelle phrase as-tu prévu de mettre sur ta vidéo ?">
                 </div>
                 <div class="input-group">
                     <label>Ton souhaité</label>
@@ -203,12 +183,13 @@
                 </div>
             </div>
 
-            <div style="padding: 1.5rem;"><button class="generate-btn" onclick="buildPrompt()">Générer ✨</button></div>
+            <div id="submitBtnContainer" style="padding: 1.5rem;"><button class="generate-btn" onclick="buildPrompt()">Générer ✨</button></div>
 
             <div id="resultArea">
                 <div class="ai-buttons" id="aiButtons"></div>
                 <button class="copy-btn" onclick="copyToClipboard()">📋 Copier le Prompt</button>
                 <div id="promptOutput"></div>
+                <button class="back-btn" onclick="resetToChoice()">↩ Recommencer / Changer d'outil</button>
             </div>
         </div>
     </div>
@@ -216,21 +197,30 @@
 
 <script>
     let currentStep = 1;
-    const userData = { profile: '', name: '', avatar: '', offer: '', niche: '', experience: '' };
+    let selectedToolID = '';
+    const userData = { avatar: '', offer: '', niche: '' };
 
-    function selectProfile(el, p) {
-        document.querySelectorAll('.profile-card').forEach(c => c.classList.remove('selected'));
+    function checkInput() {
+        let disabled = true;
+        if (currentStep === 1) disabled = !document.getElementById('avatarClient').value.trim();
+        if (currentStep === 2) disabled = !document.getElementById('offerType').value;
+        if (currentStep === 3) disabled = !document.getElementById('userNiche').value.trim();
+        if (currentStep === 4) disabled = !selectedToolID;
+        document.getElementById('nextDiagBtn').disabled = disabled;
+    }
+
+    function selectTool(el, toolID) {
+        document.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
         el.classList.add('selected');
-        userData.profile = p;
-        document.getElementById('nextDiagBtn').disabled = false;
+        selectedToolID = toolID;
+        checkInput();
     }
 
     function nextDiagnostic() {
-        if (currentStep === 2) userData.name = document.getElementById('userName').value;
-        if (currentStep === 3) userData.avatar = document.getElementById('avatarClient').value;
-        if (currentStep === 4) userData.offer = document.getElementById('offerType').value;
-        if (currentStep === 5) userData.niche = document.getElementById('userNiche').value;
-        if (currentStep === 6) { userData.experience = document.getElementById('experience').value; completeDiagnostic(); return; }
+        if (currentStep === 1) userData.avatar = document.getElementById('avatarClient').value;
+        if (currentStep === 2) userData.offer = document.getElementById('offerType').value;
+        if (currentStep === 3) userData.niche = document.getElementById('userNiche').value;
+        if (currentStep === 4) { completeDiagnostic(); return; }
         currentStep++; updateView();
     }
 
@@ -239,20 +229,30 @@
     function updateView() {
         document.querySelectorAll('.diagnostic-question').forEach(q => q.classList.remove('active'));
         document.querySelector(`[data-step="${currentStep}"]`).classList.add('active');
-        for (let i=1; i<=6; i++) document.getElementById(`step${i}`).classList.toggle('active', i <= currentStep);
+        for (let i=1; i<=4; i++) document.getElementById(`step${i}`).classList.toggle('active', i <= currentStep);
         document.getElementById('prevDiagBtn').style.display = currentStep === 1 ? 'none' : 'block';
+        checkInput();
     }
 
     function completeDiagnostic() {
         document.getElementById('diagnosticSection').style.display = 'none';
         document.getElementById('generatorSection').style.display = 'block';
+        document.getElementById('submitBtnContainer').style.display = 'block';
+        document.querySelectorAll('.tab-content').forEach(c => {
+            c.classList.remove('active');
+            c.style.display = 'none';
+        });
+        const activeTab = document.getElementById(selectedToolID);
+        activeTab.classList.add('active');
+        activeTab.style.display = 'block';
     }
 
-    function openTab(e, name) {
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(name).classList.add('active');
-        e.currentTarget.classList.add('active');
+    function resetToChoice() {
+        document.getElementById('generatorSection').style.display = 'none';
+        document.getElementById('resultArea').style.display = 'none';
+        document.getElementById('diagnosticSection').style.display = 'block';
+        currentStep = 4;
+        updateView();
     }
 
     function buildPrompt() {
@@ -272,7 +272,6 @@ MON PROFIL :
 - Client idéal : ${userData.avatar}
 - Niche : ${userData.niche}
 - Offre : ${userData.offer}
-- Je suis : ${userData.profile}
 CONSIGNES :
 1. LIMITE ABSOLUE : 150 caractères maximum
 2. Propose 3 variantes optimisées
@@ -281,11 +280,12 @@ CONSIGNES :
 5. Rendre l'offre irrésistible et claire`;
         } 
         else if (activeTab === 'tab-caption') {
+            const hookPlanned = document.getElementById('cap-hook-planned').value;
             prompt = `Rédige des légendes Instagram personnalisées pour des reels, alignées à ma voix, mon offre et mes objectifs d’entrepreneur. À chaque nouvelle demande, commence obligatoirement par une checklist interactive pour recueillir ces informations précises :
 
 Niche/secteur d’activité : ${userData.niche}
 Cible idéale (public visé) : ${userData.avatar}
-Sujet précis du reel : ${document.getElementById('cap-topic').value}
+Hook (Accroche vidéo) : ${hookPlanned || 'À définir'}
 Ton souhaité : ${document.getElementById('cap-tone').value}
 Infos clés à intégrer (faits, chiffres, anecdotes…) : ${document.getElementById('cap-infos').value}
 Action recherchée à la fin (objectif du CTA, ex : contact, abonnement, commentaire…) : ${document.getElementById('cap-cta').value}
@@ -293,13 +293,13 @@ Action recherchée à la fin (objectif du CTA, ex : contact, abonnement, comment
 Si une information manque ou reste vague, pose immédiatement une question claire, ciblée, et précise pour la compléter avant de commencer la rédaction.
 
 Structure imposée de la légende :
-Accroche : Une phrase courte, puissante et captivante pour inciter à lire la suite.
+Accroche : Une phrase courte, puissante et captivante pour inciter à lire la suite. Elle doit parfaitement faire la transition avec mon Hook vidéo : "${hookPlanned}".
 Corps : Plusieurs paragraphes développés, apportant profondeur, contextes ou conseils. Texte facile à lire, phrases courtes, apportant une vraie valeur ajoutée à la cible (jamais de séparateurs comme barres ou autres symboles externes).
 Conclusion : Un appel à l’action (CTA) personnalisé, fluide, adapté à l’objectif business donné.
 
 Contraintes :
 Rédige en français courant adapté à Instagram.
-Longueur finale entre 150 et 300 mots (selon contexte).
+Longueur finale entre 250 et 400 mots (selon contexte).
 Légende finale en texte brut — pas de code, pas de balises, pas de symboles inutiles.
 Assure la cohérence entre la cible idéale, le sujet, le ton, l’offre, la cible et l’objectif CTA dans toute la légende.
 
@@ -312,10 +312,10 @@ Format attendu :
 Explique moi que tu vas me poser une série de questions pour affiner la légende
 Affiche la checklist et complète-la avec les réponses de l’utilisateur.
 Pose immédiatement toute question manquante ou incomplète AVANT toute rédaction.
-Génère ensuite UNIQUEMENT la légende, en respectant la structure et toutes les contraintes listées ci-dessus, sur une longueur comprise entre 250 et 400 mots.
+Génère ensuite UNIQUEMENT la légende, en respectant la structure et toutes les contraintes listées ci-dessus, sur une longueur comprise entre 150 et 300 mots.
 Donne le texte final directement prêt à être copié-collé sur Instagram (pas de balises ni de mise en forme).
 
-Rappel : Rédige d’abord la checklist, vérifie qu’aucune information ne manque, puis construis la légende selon la structure demandée, en veillant à la pertinence du ton, du CTA, de l’offre (“${userData.offer}”) et pas d'emojis. Longueur du texte : 250 à 400 mots, texte brut prêt pour Instagram.`;
+Rappel : Rédige d’abord la checklist, vérifie qu’aucune information ne manque, puis construis la légende selon la structure demandée, en veillant à la pertinence du ton, du CTA, de l’offre (“${userData.offer}”) et pas d'emojis. Longueur du texte : 150 à 300 mots, texte brut prêt pour Instagram.`;
         }
         else if (activeTab === 'tab-hooks') {
             const topic = document.getElementById('hook-topic').value;
@@ -323,7 +323,7 @@ Rappel : Rédige d’abord la checklist, vérifie qu’aucune information ne man
             prompt = `PROMPT ULTIME HOOKS :
 Capter l'attention en 1 seconde. Générer curiosité ou urgence.
 Sujet : "${topic}", Angle : ${angle}.
-Profil : ${userData.profile}, Niche : ${userData.niche}, Avatar : ${userData.avatar}.
+Niche : ${userData.niche}, Avatar : ${userData.avatar}.
 CONSIGNES : Génère 10 hooks ultra-percutants adaptés aux douleurs de mon avatar. Varie les styles (Question, Secret, Mythe). Chaque hook doit donner envie de cliquer.`;
         }
         else if (activeTab === 'tab-reels') {
@@ -332,7 +332,6 @@ CONSIGNES : Génère 10 hooks ultra-percutants adaptés aux douleurs de mon avat
             const goal = document.getElementById('reel-goal').value;
             prompt = `Tu es un expert en stratégie de contenu viral sur Instagram et LinkedIn.
 Voici mon profil :
-- Je suis : ${userData.profile}
 - Ma niche : ${userData.niche}
 - Mon client idéal : ${userData.avatar}
 - Mon offre : ${userData.offer}
@@ -353,6 +352,11 @@ CONSIGNES :
 - Sois spécifique et actionnable immédiatement.`;
         }
 
+        // Masquer le formulaire et le bouton "Générer"
+        document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+        document.getElementById('submitBtnContainer').style.display = 'none';
+
+        // Afficher le résultat
         document.getElementById('promptOutput').innerText = prompt;
         document.getElementById('resultArea').style.display = 'block';
         createAIButtons(prompt);
@@ -373,10 +377,6 @@ CONSIGNES :
         navigator.clipboard.writeText(document.getElementById('promptOutput').innerText);
         alert("Prompt copié !");
     }
-
-    document.getElementById('userName').addEventListener('input', e => {
-        document.getElementById('nextDiagBtn').disabled = !e.target.value.trim();
-    });
 </script>
 </body>
 </html>
