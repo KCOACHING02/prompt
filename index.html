@@ -2,13 +2,12 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>Générateur de Prompts Marketing</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         :root {
             --primary: #6366f1;
-            --primary-hover: #4f46e5;
             --success: #10b981;
             --bg: #f8fafc;
             --card: #ffffff;
@@ -17,249 +16,223 @@
             --border: #e2e8f0;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 1rem;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f1f5f9;
             color: var(--text);
+            line-height: 1.5;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
         }
-        .container { max-width: 900px; margin: 0 auto; }
-        .header { text-align: center; margin-bottom: 1.5rem; color: white; }
-        .header h1 { font-size: 1.75rem; font-weight: 800; margin-bottom: 0.5rem; }
-        .header-cta {
-            display: inline-block; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px);
-            color: white; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 700; text-decoration: none;
-            border: 2px solid rgba(255, 255, 255, 0.3); transition: all 0.3s;
+        .container { width: 100%; max-width: 500px; background: var(--card); min-height: 100vh; position: relative; display: flex; flex-direction: column; }
+
+        /* Écrans */
+        .screen { display: none; padding: 2rem 1.5rem; flex-grow: 1; flex-direction: column; }
+        .screen.active { display: flex; }
+
+        /* Écran d'accueil */
+        #welcomeScreen { 
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); 
+            color: white; text-align: center; justify-content: center; 
         }
-        .card { background: var(--card); border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
-        #diagnosticSection { padding: 2rem 1.5rem; }
-        .progress-steps { display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 2rem; }
-        .step { width: 50px; height: 4px; background: #e2e8f0; border-radius: 999px; transition: 0.3s; }
-        .step.active { background: var(--primary); }
-        .diagnostic-question { display: none; }
-        .diagnostic-question.active { display: block; }
-        .choice-options { display: grid; gap: 1rem; margin-bottom: 2rem; }
-        .choice-card {
-            background: #f9fafb; border: 3px solid transparent; border-radius: 16px; padding: 1.25rem;
-            cursor: pointer; transition: 0.3s; font-weight: 600; text-align: center;
-        }
-        .choice-card.selected { background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%); color: white; }
-        .input-group { margin-bottom: 1.5rem; }
-        label { display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.5rem; }
+        .logo-large { font-size: 5rem; margin-bottom: 1.5rem; }
+        .welcome-title { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; line-height: 1.2; }
+        .welcome-desc { font-size: 1.1rem; opacity: 0.9; margin-bottom: 2rem; }
+
+        /* Navigation & Progression */
+        .progress-bar { height: 6px; background: #e2e8f0; position: sticky; top: 0; display: flex; }
+        .progress-fill { height: 100%; background: var(--primary); transition: width 0.3s ease; width: 0%; }
+
+        /* Typographie & Champs */
+        .question-label { font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text); }
         input, textarea, select {
-            width: 100%; padding: 0.875rem; border: 2px solid var(--border); border-radius: 10px; font-size: 1rem;
+            width: 100%; padding: 1.1rem; border: 2px solid var(--border); border-radius: 12px; 
+            font-size: 16px; margin-bottom: 1rem; background: #f8fafc;
         }
-        .nav-buttons { display: flex; gap: 1rem; margin-top: 2rem; }
-        .btn { flex: 1; padding: 1rem; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
-        .btn-primary { background: linear-gradient(135deg, var(--primary) 0%, #ec4899 100%); color: white; }
-        #generatorSection { display: none; }
-        .tab-content { padding: 1.5rem; display: none; }
-        .tab-content.active { display: block; }
-        .generate-btn { width: 100%; background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); color: white; border: none; padding: 1.25rem; border-radius: 12px; font-size: 1.125rem; font-weight: 700; cursor: pointer; }
-        #resultArea { padding: 1.5rem; background: #f8fafc; display: none; }
-        .ai-buttons { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
-        .ai-btn { display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.875rem; border-radius: 10px; color: white; text-decoration: none; font-weight: 600; font-size: 0.875rem; }
-        #promptOutput { background: #1e293b; color: #f8fafc; padding: 1.25rem; border-radius: 12px; white-space: pre-wrap; font-family: monospace; font-size: 0.875rem; max-height: 400px; overflow-y: auto; }
-        .copy-btn { background: var(--success); color: white; border: none; padding: 0.625rem 1.25rem; border-radius: 8px; cursor: pointer; font-weight: 600; margin-bottom: 1rem; }
-        .back-btn { display: block; margin: 1rem auto; background: none; border: none; color: var(--text-light); text-decoration: underline; cursor: pointer; }
+        input:focus { border-color: var(--primary); outline: none; background: #fff; }
+
+        /* Boutons */
+        .btn { 
+            padding: 1.1rem; border: none; border-radius: 14px; font-weight: 700; font-size: 1rem; cursor: pointer;
+            transition: all 0.2s; text-align: center; text-decoration: none;
+        }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); }
+        .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text-light); margin-top: 1rem; }
+        .btn:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; }
+
+        /* Grille d'outils */
+        .tool-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+        .tool-card {
+            padding: 1.25rem; border: 2px solid var(--border); border-radius: 16px; 
+            font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 1rem;
+        }
+        .tool-card.selected { border-color: var(--primary); background: #f5f3ff; color: var(--primary); }
+        .tool-card span { font-size: 1.5rem; }
+
+        /* Résultat */
+        #promptOutput { 
+            background: #1e293b; color: #f1f5f9; padding: 1rem; border-radius: 12px; 
+            font-family: monospace; font-size: 0.85rem; overflow-y: auto; margin: 1rem 0; flex-grow: 1;
+        }
+        .ai-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem; }
+        .ai-link { padding: 0.8rem; border-radius: 10px; color: white; text-align: center; font-weight: 600; text-decoration: none; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">
-        <h1>🚀 Générateur de Prompts</h1>
-        <p>Créez des prompts marketing personnalisés</p>
-        <a href="https://shop.beacons.ai/brilleetvibre/9cff3d0a-5313-4c90-9db5-7e6d5ec54309" class="header-cta" target="_blank">✨ Découvre Code Liberté</a>
+    <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+
+    <div class="screen active" id="welcomeScreen">
+        <div class="logo-large">🚀</div>
+        <h1 class="welcome-title">Générateur de Prompts Marketing</h1>
+        <p class="welcome-desc">Créez des contenus percutants en quelques étapes intuitives.</p>
+        <button class="btn btn-primary" onclick="startApp()">Lancer l'outil ✨</button>
+        <a href="https://shop.beacons.ai/brilleetvibre/9cff3d0a-5313-4c90-9db5-7e6d5ec54309" class="btn btn-outline" style="color:white; border-color:white; opacity:0.8" target="_blank">Découvrir Code Liberté</a>
     </div>
 
-    <div class="card">
-        <div id="diagnosticSection">
-            <div class="progress-steps">
-                <div class="step active" id="step1"></div><div class="step" id="step2"></div><div class="step" id="step3"></div><div class="step" id="step4"></div>
-            </div>
+    <div class="screen" id="stepAvatar">
+        <label class="question-label">1. Qui est ton client idéal ?</label>
+        <textarea id="avatarClient" placeholder="Ex: Femmes entrepreneurs de 30-45 ans qui veulent se lancer..." rows="5" oninput="validateStep('stepAvatar')"></textarea>
+        <button class="btn btn-primary" id="btnStepAvatar" onclick="nextScreen('stepOffer')" disabled>Suivant</button>
+    </div>
 
-            <div class="diagnostic-question active" data-step="1">
-                <label class="question-label">Qui est ton client idéal ?</label>
-                <input type="text" id="avatarClient" placeholder="Ex: Femmes 30-45 ans..." oninput="checkInput()">
-            </div>
-            <div class="diagnostic-question" data-step="2">
-                <label class="question-label">Que vends-tu ?</label>
-                <select id="offerType" onchange="checkInput()">
-                    <option value="">Sélectionne</option>
-                    <option value="une Formation en ligne">Formation en ligne</option>
-                    <option value="un Coaching">Coaching</option>
-                    <option value="une Prestation">Prestation</option>
-                    <option value="autre">Autre</option>
-                </select>
-            </div>
-            <div class="diagnostic-question" data-step="3">
-                <label class="question-label">Ta niche ?</label>
-                <input type="text" id="userNiche" placeholder="Thématique..." oninput="checkInput()">
-            </div>
-            <div class="diagnostic-question" data-step="4">
-                <label class="question-label">Que souhaites-tu faire aujourd'hui ?</label>
-                <div class="choice-options">
-                    <div class="choice-card" onclick="selectTool(this, 'tab-bio')">📝 Auditer ma Bio</div>
-                    <div class="choice-card" onclick="selectTool(this, 'tab-hooks')">🎣 Créer des Hooks</div>
-                    <div class="choice-card" onclick="selectTool(this, 'tab-caption')">✍️ Créer des Légendes</div>
-                    <div class="choice-card" onclick="selectTool(this, 'tab-reels')">🎥 Idées Reels/Carrousel</div>
-                </div>
-            </div>
+    <div class="screen" id="stepOffer">
+        <label class="question-label">2. Que vends-tu précisément ?</label>
+        <select id="offerType" onchange="validateStep('stepOffer')">
+            <option value="">Sélectionne ton type d'offre</option>
+            <option value="une Formation en ligne">Formation en ligne</option>
+            <option value="un Coaching">Coaching</option>
+            <option value="une Prestation">Prestation de service</option>
+            <option value="autre">Autre</option>
+        </select>
+        <button class="btn btn-primary" id="btnStepOffer" onclick="nextScreen('stepNiche')" disabled>Suivant</button>
+        <button class="btn btn-outline" onclick="prevScreen('stepAvatar')">Retour</button>
+    </div>
 
-            <div class="nav-buttons">
-                <button class="btn btn-secondary" id="prevDiagBtn" onclick="prevDiagnostic()" style="display: none;">← Retour</button>
-                <button class="btn btn-primary" id="nextDiagBtn" onclick="nextDiagnostic()" disabled>Suivant →</button>
-            </div>
+    <div class="screen" id="stepNiche">
+        <label class="question-label">3. Quelle est ta thématique / niche ?</label>
+        <input type="text" id="userNiche" placeholder="Ex: Yoga, Marketing, Bien-être..." oninput="validateStep('stepNiche')">
+        <button class="btn btn-primary" id="btnStepNiche" onclick="nextScreen('stepToolSelect')" disabled>Suivant</button>
+        <button class="btn btn-outline" onclick="prevScreen('stepOffer')">Retour</button>
+    </div>
+
+    <div class="screen" id="stepToolSelect">
+        <label class="question-label">4. Quel outil souhaites-tu utiliser ?</label>
+        <div class="tool-grid">
+            <div class="tool-card" onclick="pickTool('tab-bio')"><span>📝</span> Auditer ma Bio</div>
+            <div class="tool-card" onclick="pickTool('tab-hooks')"><span>🎣</span> Créer des Hooks</div>
+            <div class="tool-card" onclick="pickTool('tab-caption')"><span>✍️</span> Créer des Légendes</div>
+            <div class="tool-card" onclick="pickTool('tab-reels')"><span>🎥</span> Idées Reels / Carrousel</div>
+        </div>
+        <button class="btn btn-outline" onclick="prevScreen('stepNiche')" style="margin-top: 2rem">Retour</button>
+    </div>
+
+    <div class="screen" id="stepConfig">
+        <div id="tab-bio" class="tool-config" style="display:none">
+            <label class="question-label">Ma Bio Actuelle</label>
+            <textarea id="bio-current" placeholder="Colle ta bio ici..." rows="4"></textarea>
         </div>
 
-        <div id="generatorSection">
-            <div id="tab-bio" class="tab-content">
-                <div class="input-group">
-                    <label>Ma Bio Actuelle</label>
-                    <textarea id="bio-current" placeholder="Colle ta bio ici..."></textarea>
-                </div>
-            </div>
-
-            <div id="tab-caption" class="tab-content">
-                <div class="input-group">
-                    <label>Ton Hook (Accroche du Reel)</label>
-                    <input type="text" id="cap-hook-planned" placeholder="Quelle phrase as-tu prévu de mettre sur ta vidéo ?">
-                </div>
-                <div class="input-group">
-                    <label>Ton souhaité</label>
-                    <select id="cap-tone">
-                        <option value="Inspirant">Inspirant</option>
-                        <option value="Expert / Éducatif">Expert / Éducatif</option>
-                        <option value="Humoristique">Humoristique</option>
-                        <option value="Direct / Cash">Direct / Cash</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>Infos clés à intégrer (Anecdotes, faits, chiffres...)</label>
-                    <textarea id="cap-infos" placeholder="Détails importants..."></textarea>
-                </div>
-                <div class="input-group">
-                    <label>Action recherchée (CTA)</label>
-                    <input type="text" id="cap-cta" placeholder="Ex: S'abonner, cliquer sur le lien, commenter 'GO'...">
-                </div>
-            </div>
-
-            <div id="tab-hooks" class="tab-content">
-                <div class="input-group">
-                    <label>Sujet de l'accroche</label>
-                    <input type="text" id="hook-topic" placeholder="Ex: Erreurs débutants...">
-                </div>
-                <div class="input-group">
-                    <label>Angle psychologique</label>
-                    <select id="hook-angle">
-                        <option value="Curiosité">Curiosité</option>
-                        <option value="Urgence / FOMO">Urgence / FOMO</option>
-                        <option value="Casser un mythe">Contre-intuitif</option>
-                    </select>
-                </div>
-            </div>
-
-            <div id="tab-reels" class="tab-content">
-                <div class="input-group">
-                    <label>Thématique globale</label>
-                    <input type="text" id="reel-theme" placeholder="Ex: Productivité, Perte de poids...">
-                </div>
-                <div class="input-group">
-                    <label>Format souhaité</label>
-                    <select id="reel-format">
-                        <option value="Reels">Reels (Vidéo courte)</option>
-                        <option value="Carrousel">Carrousel (Série d'images)</option>
-                        <option value="Mixte">Mixte (Idées pour les deux)</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>Objectif de visibilité</label>
-                    <select id="reel-goal">
-                        <option value="Viralité (Partages)">Viralité (Partages)</option>
-                        <option value="Autorité (Expertise)">Autorité (Expertise)</option>
-                        <option value="Conversion (Vente)">Conversion (Vente)</option>
-                    </select>
-                </div>
-            </div>
-
-            <div id="submitBtnContainer" style="padding: 1.5rem;"><button class="generate-btn" onclick="buildPrompt()">Générer ✨</button></div>
-
-            <div id="resultArea">
-                <div class="ai-buttons" id="aiButtons"></div>
-                <button class="copy-btn" onclick="copyToClipboard()">📋 Copier le Prompt</button>
-                <div id="promptOutput"></div>
-                <button class="back-btn" onclick="resetToChoice()">↩ Recommencer / Changer d'outil</button>
-            </div>
+        <div id="tab-caption" class="tool-config" style="display:none">
+            <label class="question-label">Détails de la légende</label>
+            <input type="text" id="cap-hook-planned" placeholder="Phrase sur ta vidéo">
+            <select id="cap-tone">
+                <option value="Inspirant">Inspirant</option>
+                <option value="Expert / Éducatif">Expert / Éducatif</option>
+                <option value="Humoristique">Humoristique</option>
+                <option value="Direct / Cash">Direct / Cash</option>
+            </select>
+            <textarea id="cap-infos" placeholder="Infos clés / Anecdotes..." rows="3"></textarea>
+            <input type="text" id="cap-cta" placeholder="CTA (ex: Commente GO)">
         </div>
+
+        <div id="tab-hooks" class="tool-config" style="display:none">
+            <label class="question-label">Paramètres Hooks</label>
+            <input type="text" id="hook-topic" placeholder="Sujet de l'accroche">
+            <select id="hook-angle">
+                <option value="Curiosité">Curiosité</option>
+                <option value="Urgence / FOMO">Urgence / FOMO</option>
+                <option value="Casser un mythe">Contre-intuitif</option>
+            </select>
+        </div>
+
+        <div id="tab-reels" class="tool-config" style="display:none">
+            <label class="question-label">Paramètres Stratégie</label>
+            <input type="text" id="reel-theme" placeholder="Thématique globale">
+            <select id="reel-format">
+                <option value="Reels">Reels</option>
+                <option value="Carrousel">Carrousel</option>
+            </select>
+            <select id="reel-goal">
+                <option value="Viralité">Viralité</option>
+                <option value="Autorité">Autorité</option>
+                <option value="Conversion">Conversion</option>
+            </select>
+        </div>
+
+        <button class="btn btn-primary" onclick="generateNow()" style="margin-top: 1rem">Générer mon Prompt ✨</button>
+        <button class="btn btn-outline" onclick="prevScreen('stepToolSelect')">Changer d'outil</button>
+    </div>
+
+    <div class="screen" id="stepResult">
+        <label class="question-label">Ton Prompt est prêt !</label>
+        <div class="ai-grid" id="aiButtons"></div>
+        <button class="btn btn-primary" onclick="copyToClipboard()" style="background:var(--success)">📋 Copier le Prompt</button>
+        <div id="promptOutput"></div>
+        <button class="btn btn-outline" onclick="location.reload()">↩ Recommencer de zéro</button>
     </div>
 </div>
 
 <script>
-    let currentStep = 1;
-    let selectedToolID = '';
-    const userData = { avatar: '', offer: '', niche: '' };
+    let currentTool = '';
+    const screens = ['welcomeScreen', 'stepAvatar', 'stepOffer', 'stepNiche', 'stepToolSelect', 'stepConfig', 'stepResult'];
 
-    function checkInput() {
-        let disabled = true;
-        if (currentStep === 1) disabled = !document.getElementById('avatarClient').value.trim();
-        if (currentStep === 2) disabled = !document.getElementById('offerType').value;
-        if (currentStep === 3) disabled = !document.getElementById('userNiche').value.trim();
-        if (currentStep === 4) disabled = !selectedToolID;
-        document.getElementById('nextDiagBtn').disabled = disabled;
+    function updateProgress(screenId) {
+        const idx = screens.indexOf(screenId);
+        const percent = (idx / (screens.length - 1)) * 100;
+        document.getElementById('progressFill').style.width = percent + '%';
+        document.getElementById('progressBar').style.display = screenId === 'welcomeScreen' ? 'none' : 'flex';
     }
 
-    function selectTool(el, toolID) {
-        document.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
-        el.classList.add('selected');
-        selectedToolID = toolID;
-        checkInput();
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        updateProgress(id);
+        window.scrollTo(0,0);
     }
 
-    function nextDiagnostic() {
-        if (currentStep === 1) userData.avatar = document.getElementById('avatarClient').value;
-        if (currentStep === 2) userData.offer = document.getElementById('offerType').value;
-        if (currentStep === 3) userData.niche = document.getElementById('userNiche').value;
-        if (currentStep === 4) { completeDiagnostic(); return; }
-        currentStep++; updateView();
+    function startApp() { showScreen('stepAvatar'); }
+    function nextScreen(id) { showScreen(id); }
+    function prevScreen(id) { showScreen(id); }
+
+    function validateStep(stepId) {
+        let isValid = false;
+        if (stepId === 'stepAvatar') isValid = document.getElementById('avatarClient').value.trim().length > 5;
+        if (stepId === 'stepOffer') isValid = document.getElementById('offerType').value !== "";
+        if (stepId === 'stepNiche') isValid = document.getElementById('userNiche').value.trim().length > 2;
+        
+        const btnId = 'btn' + stepId.charAt(0).toUpperCase() + stepId.slice(1);
+        document.getElementById(btnId).disabled = !isValid;
     }
 
-    function prevDiagnostic() { currentStep--; updateView(); }
-
-    function updateView() {
-        document.querySelectorAll('.diagnostic-question').forEach(q => q.classList.remove('active'));
-        document.querySelector(`[data-step="${currentStep}"]`).classList.add('active');
-        for (let i=1; i<=4; i++) document.getElementById(`step${i}`).classList.toggle('active', i <= currentStep);
-        document.getElementById('prevDiagBtn').style.display = currentStep === 1 ? 'none' : 'block';
-        checkInput();
+    function pickTool(toolId) {
+        currentTool = toolId;
+        document.querySelectorAll('.tool-config').forEach(c => c.style.display = 'none');
+        document.getElementById(toolId).style.display = 'block';
+        nextScreen('stepConfig');
     }
 
-    function completeDiagnostic() {
-        document.getElementById('diagnosticSection').style.display = 'none';
-        document.getElementById('generatorSection').style.display = 'block';
-        document.getElementById('submitBtnContainer').style.display = 'block';
-        document.querySelectorAll('.tab-content').forEach(c => {
-            c.classList.remove('active');
-            c.style.display = 'none';
-        });
-        const activeTab = document.getElementById(selectedToolID);
-        activeTab.classList.add('active');
-        activeTab.style.display = 'block';
-    }
+    function generateNow() {
+        const userData = {
+            avatar: document.getElementById('avatarClient').value,
+            offer: document.getElementById('offerType').value,
+            niche: document.getElementById('userNiche').value
+        };
 
-    function resetToChoice() {
-        document.getElementById('generatorSection').style.display = 'none';
-        document.getElementById('resultArea').style.display = 'none';
-        document.getElementById('diagnosticSection').style.display = 'block';
-        currentStep = 4;
-        updateView();
-    }
-
-    function buildPrompt() {
-        const activeTab = document.querySelector('.tab-content.active').id;
         let prompt = "";
 
-        if (activeTab === 'tab-bio') {
+        if (currentTool === 'tab-bio') {
             const current = document.getElementById('bio-current').value;
             prompt = `PROMPT AUDIT DE TA BIO
 À COPIER / COLLER avec un screen de ta bio dans ChatGPT :
@@ -279,7 +252,7 @@ CONSIGNES :
 4. Inclure un hook puissant dans la première ligne
 5. Rendre l'offre irrésistible et claire`;
         } 
-        else if (activeTab === 'tab-caption') {
+        else if (currentTool === 'tab-caption') {
             const hookPlanned = document.getElementById('cap-hook-planned').value;
             prompt = `Rédige des légendes Instagram personnalisées pour des reels, alignées à ma voix, mon offre et mes objectifs d’entrepreneur. À chaque nouvelle demande, commence obligatoirement par une checklist interactive pour recueillir ces informations précises :
 
@@ -317,7 +290,7 @@ Donne le texte final directement prêt à être copié-collé sur Instagram (pas
 
 Rappel : Rédige d’abord la checklist, vérifie qu’aucune information ne manque, puis construis la légende selon la structure demandée, en veillant à la pertinence du ton, du CTA, de l’offre (“${userData.offer}”) et pas d'emojis. Longueur du texte : 150 à 300 mots, texte brut prêt pour Instagram.`;
         }
-        else if (activeTab === 'tab-hooks') {
+        else if (currentTool === 'tab-hooks') {
             const topic = document.getElementById('hook-topic').value;
             const angle = document.getElementById('hook-angle').value;
             prompt = `PROMPT ULTIME HOOKS :
@@ -326,7 +299,7 @@ Sujet : "${topic}", Angle : ${angle}.
 Niche : ${userData.niche}, Avatar : ${userData.avatar}.
 CONSIGNES : Génère 10 hooks ultra-percutants adaptés aux douleurs de mon avatar. Varie les styles (Question, Secret, Mythe). Chaque hook doit donner envie de cliquer.`;
         }
-        else if (activeTab === 'tab-reels') {
+        else if (currentTool === 'tab-reels') {
             const theme = document.getElementById('reel-theme').value;
             const format = document.getElementById('reel-format').value;
             const goal = document.getElementById('reel-goal').value;
@@ -352,14 +325,9 @@ CONSIGNES :
 - Sois spécifique et actionnable immédiatement.`;
         }
 
-        // Masquer le formulaire et le bouton "Générer"
-        document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
-        document.getElementById('submitBtnContainer').style.display = 'none';
-
-        // Afficher le résultat
         document.getElementById('promptOutput').innerText = prompt;
-        document.getElementById('resultArea').style.display = 'block';
         createAIButtons(prompt);
+        nextScreen('stepResult');
     }
 
     function createAIButtons(p) {
@@ -370,7 +338,7 @@ CONSIGNES :
             {n:'Claude', u:`https://claude.ai/new?q=${enc}`, b:'#d97757'},
             {n:'Gemini', u:`https://gemini.google.com/app?q=${enc}`, b:'#4285f4'},
             {n:'Copilot', u:`https://copilot.microsoft.com/?q=${enc}`, b:'#0078d4'}
-        ].map(l => `<a href="${l.u}" class="ai-btn" style="background:${l.b}" target="_blank">${l.n}</a>`).join('');
+        ].map(l => `<a href="${l.u}" class="ai-link" style="background:${l.b}" target="_blank">${l.n}</a>`).join('');
     }
 
     function copyToClipboard() {
