@@ -40,7 +40,7 @@
         .welcome-desc { font-size: 1.1rem; opacity: 0.9; margin-bottom: 2rem; }
 
         /* Navigation & Progression */
-        .progress-bar { height: 6px; background: #e2e8f0; position: sticky; top: 0; display: flex; }
+        .progress-bar { height: 6px; background: #e2e8f0; position: sticky; top: 0; display: none; }
         .progress-fill { height: 100%; background: var(--primary); transition: width 0.3s ease; width: 0%; }
 
         /* Typographie & Champs */
@@ -49,7 +49,11 @@
             width: 100%; padding: 1.1rem; border: 2px solid var(--border); border-radius: 12px; 
             font-size: 16px; margin-bottom: 1rem; background: #f8fafc;
         }
-        input:focus { border-color: var(--primary); outline: none; background: #fff; }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); outline: none; background: #fff; }
+
+        /* Bibliothèque de Hooks Style */
+        .library-box { background: #fff9eb; padding: 1rem; border-radius: 12px; border: 1px dashed #f59e0b; margin-bottom: 1.5rem; }
+        .library-box label { font-size: 0.85rem; font-weight: 800; color: #b45309; display: block; margin-bottom: 0.5rem; }
 
         /* Boutons */
         .btn { 
@@ -73,6 +77,7 @@
         #promptOutput { 
             background: #1e293b; color: #f1f5f9; padding: 1rem; border-radius: 12px; 
             font-family: monospace; font-size: 0.85rem; overflow-y: auto; margin: 1rem 0; flex-grow: 1;
+            white-space: pre-wrap;
         }
         .ai-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem; }
         .ai-link { padding: 0.8rem; border-radius: 10px; color: white; text-align: center; font-weight: 600; text-decoration: none; font-size: 0.8rem; }
@@ -87,13 +92,13 @@
         <div class="logo-large">🚀</div>
         <h1 class="welcome-title">Générateur de Prompts Marketing</h1>
         <p class="welcome-desc">Créez des contenus percutants en quelques étapes intuitives.</p>
-        <button class="btn btn-primary" onclick="startApp()">Lancer le générateur de prompts ✨</button>
+        <button class="btn btn-primary" onclick="startApp()">Lancer l'outil ✨</button>
         <a href="https://shop.beacons.ai/brilleetvibre/9cff3d0a-5313-4c90-9db5-7e6d5ec54309" class="btn btn-outline" style="color:white; border-color:white; opacity:0.8" target="_blank">Découvrir Code Liberté</a>
     </div>
 
     <div class="screen" id="stepAvatar">
         <label class="question-label">1. Qui est ton client idéal ?</label>
-        <textarea id="avatarClient" placeholder="Ex: Femmes entrepreneurs de 30-45 ans qui veulent se lancer..." rows="5" oninput="validateStep('stepAvatar')"></textarea>
+        <textarea id="avatarClient" placeholder="Ex: Femmes entrepreneurs de 30-45 ans..." rows="5" oninput="validateStep('stepAvatar')"></textarea>
         <button class="btn btn-primary" id="btnStepAvatar" onclick="nextScreen('stepOffer')" disabled>Suivant</button>
     </div>
 
@@ -129,6 +134,7 @@
     </div>
 
     <div class="screen" id="stepConfig">
+        
         <div id="tab-bio" class="tool-config" style="display:none">
             <label class="question-label">Ma Bio Actuelle</label>
             <textarea id="bio-current" placeholder="Colle ta bio ici..." rows="4"></textarea>
@@ -149,7 +155,58 @@
 
         <div id="tab-hooks" class="tool-config" style="display:none">
             <label class="question-label">Paramètres Hooks</label>
-            <input type="text" id="hook-topic" placeholder="Sujet de l'accroche">
+            
+            <div class="library-box">
+                <label>💡 Bibliothèque de Hooks Prêts à l'emploi</label>
+                <select id="hookLibrary" onchange="applyHookLibrary()">
+                    <option value="">-- Choisir un modèle --</option>
+                    <optgroup label="🔥 Stopscroller">
+                        <option value="Tu vas pas croire ce qui se passe après.">Tu vas pas croire ce qui se passe après.</option>
+                        <option value="C’est peut-être le truc le plus important que tu verras aujourd’hui.">C’est peut-être le truc le plus important...</option>
+                        <option value="Cette simple astuce m’a fait des économisé des heures.">Cette simple astuce m’a fait économiser...</option>
+                        <option value="Cette erreur te coûte peut-être des milliers d’euros.">Cette erreur te coûte des milliers d’euros.</option>
+                        <option value="Tout le monde fait cette erreur. Ne sois pas comme eux.">Tout le monde fait cette erreur...</option>
+                        <option value="Personne n’en parle, mais c’est juste incroyable.">Personne n’en parle, incroyable.</option>
+                        <option value="Regarde ça avant de perdre ton temps.">Regarde ça avant de perdre ton temps.</option>
+                        <option value="Si ça te retourne pas le cerveau, rien d’autre ne le fera.">Si ça te retourne pas le cerveau...</option>
+                        <option value="Je suis pas censé dire ça… mais tu dois l’entendre.">Je suis pas censé dire ça...</option>
+                        <option value="Cette habitude m’a rendu méconnaissable en 90 jours.">Cette habitude m’a rendu méconnaissable...</option>
+                    </optgroup>
+                    <optgroup label="🛠 Problème - Solution">
+                        <option value="Cette erreur te fait perdre des clients.">Cette erreur te fait perdre des clients.</option>
+                        <option value="Arrête de scroller si tu galères avec ça.">Arrête de scroller si tu galères...</option>
+                        <option value="Tu veux [résultat] ? N’essaie surtout pas ça, fais plutôt ça.">Tu veux [résultat] ? Fais plutôt ça.</option>
+                        <option value="Voici pourquoi ton plan ne fonctionne pas.">Voici pourquoi ton plan ne fonctionne pas.</option>
+                        <option value="Tu galères avec [problème] ? Voici la solution.">Tu galères avec [problème] ?</option>
+                    </optgroup>
+                    <optgroup label="📚 Éducatif">
+                        <option value="La façon la plus efficace de [objectif] quand t’es [situation].">La façon la plus efficace de...</option>
+                        <option value="Comment obtenir [résultat] rapidement.">Comment obtenir [résultat] rapidement.</option>
+                        <option value="Tu veux [résultat] ? Alors stoppe ça et fais ça à la place.">Tu veux [résultat] ? Stoppe ça.</option>
+                        <option value="Voici pourquoi ce conseil populaire ne marche pas.">Pourquoi ce conseil populaire ne marche pas.</option>
+                        <option value="J’ai testé [outil], ça a transformé ma façon de [action].">J’ai testé [outil], ça a transformé...</option>
+                    </optgroup>
+                    <optgroup label="❓ Question">
+                        <option value="Et si je te disais que ce truc ruine tes résultats ?">Et si ce truc ruinait tes résultats ?</option>
+                        <option value="Tu fais encore cette erreur ?">Tu fais encore cette erreur ?</option>
+                        <option value="Tu veux savoir pourquoi [erreur courante] te bloque ?">Pourquoi [erreur courante] te bloque ?</option>
+                        <option value="Si t’es encore en train de faire ça… alors écoute bien.">Si t’es encore en train de faire ça...</option>
+                        <option value="T’as déjà eu ce moment où tu réalises que tu faisais tout à l’envers ?">T’as fait tout à l’envers ?</option>
+                    </optgroup>
+                    <optgroup label="📖 Storytelling">
+                        <option value="Tout a changé le jour où j’ai décidé de [changement fort].">Tout a changé le jour où...</option>
+                        <option value="Je peux pas croire que je dise ça, mais…">Je peux pas croire que je dise ça...</option>
+                        <option value="J’ai essayé [truc inattendu], et ça a tout changé.">J’ai essayé [truc], ça a tout changé.</option>
+                        <option value="Je vais te raconter comment j’ai transformé mon échec en succès.">Mon échec en succès.</option>
+                        <option value="Voici comment j’ai fait [exploit] en [durée courte].">Comment j'ai fait [exploit] en...</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <label style="font-size: 0.9rem; font-weight: 600;">Sujet / Accroche choisie</label>
+            <input type="text" id="hook-topic" placeholder="Sujet ou sélectionne ci-dessus">
+            
+            <label style="font-size: 0.9rem; font-weight: 600;">Angle psychologique</label>
             <select id="hook-angle">
                 <option value="Curiosité">Curiosité</option>
                 <option value="Urgence / FOMO">Urgence / FOMO</option>
@@ -208,12 +265,21 @@
 
     function validateStep(stepId) {
         let isValid = false;
-        if (stepId === 'stepAvatar') isValid = document.getElementById('avatarClient').value.trim().length > 5;
+        if (stepId === 'stepAvatar') isValid = document.getElementById('avatarClient').value.trim().length > 3;
         if (stepId === 'stepOffer') isValid = document.getElementById('offerType').value !== "";
         if (stepId === 'stepNiche') isValid = document.getElementById('userNiche').value.trim().length > 2;
         
         const btnId = 'btn' + stepId.charAt(0).toUpperCase() + stepId.slice(1);
         document.getElementById(btnId).disabled = !isValid;
+    }
+
+    function applyHookLibrary() {
+        const lib = document.getElementById('hookLibrary');
+        const input = document.getElementById('hook-topic');
+        if (lib.value) {
+            input.value = lib.value;
+            input.focus();
+        }
     }
 
     function pickTool(toolId) {
