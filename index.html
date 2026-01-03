@@ -26,11 +26,9 @@
         }
         .container { width: 100%; max-width: 500px; background: var(--card); min-height: 100vh; position: relative; display: flex; flex-direction: column; }
 
-        /* Écrans */
         .screen { display: none; padding: 2rem 1.5rem; flex-grow: 1; flex-direction: column; }
         .screen.active { display: flex; }
 
-        /* Écran d'accueil */
         #welcomeScreen { 
             background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); 
             color: white; text-align: center; justify-content: center; 
@@ -39,11 +37,9 @@
         .welcome-title { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; line-height: 1.2; }
         .welcome-desc { font-size: 1.1rem; opacity: 0.9; margin-bottom: 2rem; }
 
-        /* Navigation & Progression */
         .progress-bar { height: 6px; background: #e2e8f0; position: sticky; top: 0; display: none; }
         .progress-fill { height: 100%; background: var(--primary); transition: width 0.3s ease; width: 0%; }
 
-        /* Typographie & Champs */
         .question-label { font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text); }
         input, textarea, select {
             width: 100%; padding: 1.1rem; border: 2px solid var(--border); border-radius: 12px; 
@@ -51,11 +47,9 @@
         }
         input:focus, select:focus, textarea:focus { border-color: var(--primary); outline: none; background: #fff; }
 
-        /* Bibliothèque de Hooks Style */
         .library-box { background: #fff9eb; padding: 1rem; border-radius: 12px; border: 1px dashed #f59e0b; margin-bottom: 1.5rem; }
         .library-box label { font-size: 0.85rem; font-weight: 800; color: #b45309; display: block; margin-bottom: 0.5rem; }
 
-        /* Boutons */
         .btn { 
             padding: 1.1rem; border: none; border-radius: 14px; font-weight: 700; font-size: 1rem; cursor: pointer;
             transition: all 0.2s; text-align: center; text-decoration: none;
@@ -64,7 +58,6 @@
         .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text-light); margin-top: 1rem; }
         .btn:disabled { background: #cbd5e1; box-shadow: none; cursor: not-allowed; }
 
-        /* Grille d'outils */
         .tool-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
         .tool-card {
             padding: 1.25rem; border: 2px solid var(--border); border-radius: 16px; 
@@ -72,7 +65,6 @@
         }
         .tool-card span { font-size: 1.5rem; }
 
-        /* Résultat */
         #promptOutput { 
             background: #1e293b; color: #f1f5f9; padding: 1rem; border-radius: 12px; 
             font-family: monospace; font-size: 0.85rem; overflow-y: auto; margin: 1rem 0; flex-grow: 1;
@@ -91,7 +83,7 @@
         <div class="logo-large">🚀</div>
         <h1 class="welcome-title">Générateur de Prompts Marketing</h1>
         <p class="welcome-desc">Créez des contenus percutants en quelques étapes intuitives.</p>
-        <button class="btn btn-primary" onclick="startApp()">Lancer le générateur de prompts✨</button>
+        <button class="btn btn-primary" onclick="startApp()">Lance le générateur de prompt ✨</button>
         <a href="https://shop.beacons.ai/brilleetvibre/9cff3d0a-5313-4c90-9db5-7e6d5ec54309" class="btn btn-outline" style="color:white; border-color:white; opacity:0.8" target="_blank">Découvrir Code Liberté</a>
     </div>
 
@@ -122,7 +114,7 @@
     </div>
 
     <div class="screen" id="stepToolSelect">
-        <label class="question-label">4. Quel prompt souhaite tu utiliser ?</label>
+        <label class="question-label">4. Quel outil souhaites-tu utiliser ?</label>
         <div class="tool-grid">
             <div class="tool-card" onclick="pickTool('tab-bio')"><span>📝</span> Auditer ma Bio</div>
             <div class="tool-card" onclick="pickTool('tab-hooks')"><span>🎣</span> Créer des Hooks</div>
@@ -156,8 +148,9 @@
         <div id="tab-improve" class="tool-config" style="display:none">
             <label class="question-label">Améliorer ma légende</label>
             <textarea id="improve-text" placeholder="Colle ta légende existante ici..." rows="6"></textarea>
-            <label style="font-size: 0.9rem; font-weight: 600;">Quel est l'objectif de l'amélioration ?</label>
+            <label style="font-size: 0.9rem; font-weight: 600;">Objectif de l'amélioration</label>
             <select id="improve-goal">
+                <option value="la structurer selon la méthode AIDA (Attention, Intérêt, Désir, Action)">Structurer avec la méthode AIDA</option>
                 <option value="la rendre plus dynamique et captivante">Plus dynamique / captivante</option>
                 <option value="mieux vendre mon offre">Plus de conversion / Vente</option>
                 <option value="la rendre plus courte et percutante">Plus courte et punchy</option>
@@ -181,15 +174,10 @@
                     <optgroup label="🔥 Stopscroller">
                         <option value="Tu vas pas croire ce qui se passe après.">Tu vas pas croire ce qui se passe après.</option>
                         <option value="C’est peut-être le truc le plus important que tu verras aujourd’hui.">C’est peut-être le truc le plus important...</option>
-                        <option value="Cette simple astuce m’a fait des économisé des heures.">Cette simple astuce m’a fait économiser...</option>
                         <option value="Cette erreur te coûte peut-être des milliers d’euros.">Cette erreur te coûte des milliers d’euros.</option>
                         <option value="Tout le monde fait cette erreur. Ne sois pas comme eux.">Tout le monde fait cette erreur...</option>
                     </optgroup>
-                    <optgroup label="🛠 Problème - Solution">
-                        <option value="Cette erreur te fait perdre des clients.">Cette erreur te fait perdre des clients.</option>
-                        <option value="Arrête de scroller si tu galères avec ça.">Arrête de scroller si tu galères...</option>
-                    </optgroup>
-                    </select>
+                </select>
             </div>
             <input type="text" id="hook-topic" placeholder="Sujet ou sélectionne ci-dessus">
             <select id="hook-angle">
@@ -214,7 +202,7 @@
         </div>
 
         <button class="btn btn-primary" onclick="generateNow()" style="margin-top: 1rem">Générer mon Prompt ✨</button>
-        <button class="btn btn-outline" onclick="prevScreen('stepToolSelect')">ACCUEIL</button>
+        <button class="btn btn-outline" onclick="prevScreen('stepToolSelect')">Changer d'outil</button>
     </div>
 
     <div class="screen" id="stepResult">
@@ -279,56 +267,48 @@
 
         let prompt = "";
 
-        // Logique Perfectionner Légende
         if (currentTool === 'tab-improve') {
             const originalText = document.getElementById('improve-text').value;
             const goal = document.getElementById('improve-goal').value;
             const tone = document.getElementById('improve-tone').value;
+            
+            let specialInstructions = "";
+            if (goal.includes("AIDA")) {
+                specialInstructions = `\nCONSIGNES SPÉCIFIQUES MÉTHODE AIDA :
+- ATTENTION : Une accroche choc qui arrête le scroll.
+- INTÉRÊT : Présenter un fait ou une douleur spécifique à mon avatar.
+- DÉSIR : Expliquer les bénéfices de mon offre (${userData.offer}) ou la transformation.
+- ACTION : Un appel à l'action clair et direct.`;
+            }
 
-            prompt = `Tu es un expert en Copywriting et Stratégie Social Media. 
-Ta mission est d'optimiser la légende Instagram suivante pour maximiser l'impact auprès de mon client idéal.
-
-MON PROFIL :
-- Client idéal : ${userData.avatar}
-- Niche : ${userData.niche}
-- Offre : ${userData.offer}
+            prompt = `Tu es un expert en Copywriting. Ta mission est d'optimiser la légende Instagram suivante pour mon client idéal (${userData.avatar}).
 
 LÉGENDE ACTUELLE :
 "${originalText}"
 
-OBJECTIF DE L'AMÉLIORATION :
-Le but est de ${goal} en utilisant un ton "${tone}".
+OBJECTIF : ${goal}
+TON : ${tone}
+NICHE : ${userData.niche}
+OFFRE : ${userData.offer}${specialInstructions}
 
-CONSIGNES DE RÉÉCRITURE :
-1. Améliore l'accroche (Hook) pour qu'elle soit irrésistible dès les premières millisecondes.
-2. Structure le corps du texte pour une lecture fluide (phrases courtes, aération).
-3. Renforce l'appel à l'action (CTA) pour qu'il soit naturel mais puissant.
-4. Conserve l'essence du message original tout en le rendant plus persuasif.
-
-Propose-moi 2 versions :
-- Version A : Une réécriture fidèle mais optimisée.
-- Version B : Une réécriture plus audacieuse basée sur la psychologie de mon avatar.
-
-Rends le texte brut, prêt à être copié-collé.`;
+Lignes directrices :
+1. Améliore la clarté et l'impact.
+2. Utilise des sauts de ligne pour aérer le texte.
+3. Propose 2 variantes optimisées, prêtes à l'emploi.`;
         }
         else if (currentTool === 'tab-bio') {
             const current = document.getElementById('bio-current').value;
-            prompt = `PROMPT AUDIT DE TA BIO... [Suite de ton prompt bio original]`;
+            prompt = `PROMPT AUDIT DE TA BIO\nMA BIO ACTUELLE : ${current || 'N/A'}\nClient idéal : ${userData.avatar}\nNiche : ${userData.niche}\nOffre : ${userData.offer}\nCONSIGNES : Propose 3 variantes de bio optimisées SEO de max 150 caractères.`;
         } 
         else if (currentTool === 'tab-caption') {
             const hookPlanned = document.getElementById('cap-hook-planned').value;
-            prompt = `Rédige des légendes Instagram personnalisées... [Suite de ton prompt légendes original]`;
+            prompt = `Rédige une légende Instagram complète.\nHook vidéo : ${hookPlanned}\nTon : ${document.getElementById('cap-tone').value}\nInfos : ${document.getElementById('cap-infos').value}\nCTA : ${document.getElementById('cap-cta').value}\nCible : ${userData.avatar}\nOffre : ${userData.offer}`;
         }
         else if (currentTool === 'tab-hooks') {
-            const topic = document.getElementById('hook-topic').value;
-            const angle = document.getElementById('hook-angle').value;
-            prompt = `PROMPT ULTIME HOOKS... [Suite de ton prompt hooks original]`;
+            prompt = `Génère 10 hooks ultra-percutants pour mon client idéal (${userData.avatar}).\nSujet : ${document.getElementById('hook-topic').value}\nAngle : ${document.getElementById('hook-angle').value}\nNiche : ${userData.niche}`;
         }
         else if (currentTool === 'tab-reels') {
-            const theme = document.getElementById('reel-theme').value;
-            const format = document.getElementById('reel-format').value;
-            const goal = document.getElementById('reel-goal').value;
-            prompt = `Tu es un expert en stratégie de contenu viral... [Suite de ton prompt reels original]`;
+            prompt = `Génère 5 idées de concepts ${document.getElementById('reel-format').value} viraux.\nThème : ${document.getElementById('reel-theme').value}\nObjectif : ${document.getElementById('reel-goal').value}\nCible : ${userData.avatar}\nNiche : ${userData.niche}`;
         }
 
         document.getElementById('promptOutput').innerText = prompt;
@@ -342,8 +322,7 @@ Rends le texte brut, prêt à être copié-collé.`;
         container.innerHTML = [
             {n:'ChatGPT', u:`https://chat.openai.com/?q=${enc}`, b:'#10a37f'},
             {n:'Claude', u:`https://claude.ai/new?q=${enc}`, b:'#d97757'},
-            {n:'Gemini', u:`https://gemini.google.com/app?q=${enc}`, b:'#4285f4'},
-            {n:'Copilot', u:`https://copilot.microsoft.com/?q=${enc}`, b:'#0078d4'}
+            {n:'Gemini', u:`https://gemini.google.com/app?q=${enc}`, b:'#4285f4'}
         ].map(l => `<a href="${l.u}" class="ai-link" style="background:${l.b}" target="_blank">${l.n}</a>`).join('');
     }
 
