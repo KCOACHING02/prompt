@@ -63,7 +63,6 @@
             padding: 1.25rem; border: 2px solid var(--border); border-radius: 16px; 
             font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 1rem;
         }
-        .tool-card.selected { border-color: var(--primary); background: #f5f3ff; color: var(--primary); }
         .tool-card span { font-size: 1.5rem; }
 
         #promptOutput { 
@@ -191,9 +190,7 @@
                     </optgroup>
                 </select>
             </div>
-            <label style="font-size: 0.9rem; font-weight: 600;">Sujet / Accroche choisie</label>
             <input type="text" id="hook-topic" placeholder="Sujet ou sélectionne ci-dessus">
-            <label style="font-size: 0.9rem; font-weight: 600;">Angle psychologique</label>
             <select id="hook-angle">
                 <option value="Curiosité">Curiosité</option>
                 <option value="Urgence / FOMO">Urgence / FOMO</option>
@@ -367,7 +364,6 @@ CONSIGNES :
             const topic = document.getElementById('hook-topic').value;
             const angle = document.getElementById('hook-angle').value;
             prompt = `PROMPT ULTIME HOOKS :
-Capter l'attention en 1 seconde. Générer curiosité ou urgence.
 Sujet : "${topic}", Angle : ${angle}.
 Niche : ${userData.niche}, Avatar : ${userData.avatar}.
 CONSIGNES : Génère 10 hooks ultra-percutants adaptés aux douleurs de mon avatar. Varie les styles (Question, Secret, Mythe). Chaque hook doit donner envie de cliquer.`;
@@ -388,14 +384,9 @@ L'objectif principal est : ${goal}.
 
 POUR CHAQUE IDÉE, FOURNIS :
 1. Un titre accrocheur pour le concept.
-2. Le Hook (Accroche visuelle ou texte) à mettre en gros sur la vidéo ou la 1ère slide.
-3. Le déroulement rapide (ex: Slide 1, 2, 3 ou Plan A, B, C).
-4. Pourquoi ce concept va fonctionner pour mon avatar (${userData.avatar}).
-
-CONSIGNES :
-- Propose des concepts variés (éducatif, storytelling, divertissement).
-- Utilise un ton adapté à ma niche.
-- Sois spécifique et actionnable immédiatement.`;
+2. Le Hook à mettre en gros sur la vidéo ou la 1ère slide.
+3. Le déroulement rapide.
+4. Pourquoi ce concept va fonctionner pour mon avatar.`;
         }
 
         document.getElementById('promptOutput').innerText = prompt;
