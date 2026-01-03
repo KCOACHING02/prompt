@@ -116,6 +116,7 @@
     <div class="screen" id="stepToolSelect">
         <label class="question-label">4. Quel outil souhaites-tu utiliser ?</label>
         <div class="tool-grid">
+            <div class="tool-card" onclick="pickTool('tab-niche-finder')"><span>🔍</span> Trouver ma Niche Business</div>
             <div class="tool-card" onclick="pickTool('tab-bio')"><span>📝</span> Auditer ma Bio</div>
             <div class="tool-card" onclick="pickTool('tab-hooks')"><span>🎣</span> Créer des Hooks</div>
             <div class="tool-card" onclick="pickTool('tab-caption')"><span>✍️</span> Créer des Légendes</div>
@@ -127,6 +128,14 @@
 
     <div class="screen" id="stepConfig">
         
+        <div id="tab-niche-finder" class="tool-config" style="display:none">
+            <label class="question-label">Diagnostic de ton profil</label>
+            <label style="font-size: 0.9rem; font-weight: 600;">Quelles sont tes compétences & expériences ?</label>
+            <textarea id="diag-skills" placeholder="Ex: Gestion de projet, Cuisine healthy, Vente immobilière..." rows="3"></textarea>
+            <label style="font-size: 0.9rem; font-weight: 600;">Qu'est-ce qui te passionne ou t'attire ?</label>
+            <textarea id="diag-wants" placeholder="Ex: Aider les gens, travailler de n'importe où, le bien-être..." rows="3"></textarea>
+        </div>
+
         <div id="tab-bio" class="tool-config" style="display:none">
             <label class="question-label">Ma Bio Actuelle</label>
             <textarea id="bio-current" placeholder="Colle ta bio ici..." rows="4"></textarea>
@@ -278,7 +287,79 @@
 
         let prompt = "";
 
-        if (currentTool === 'tab-bio') {
+        if (currentTool === 'tab-niche-finder') {
+            const skills = document.getElementById('diag-skills').value;
+            const wants = document.getElementById('diag-wants').value;
+            
+            prompt = `Agis comme un expert en stratégie business et en positionnement, spécialisé dans la création de business basés sur le contenu et Instagram en 2026.
+
+MON PROFIL UTILISATEUR (Diagnostic) :
+- Mes compétences et expériences : ${skills}
+- Ce que je souhaite et mes centres d'intérêt : ${wants}
+
+Ton objectif est de m’aider à identifier une niche claire, rentable et durable, avec un potentiel de croissance élevé (jusqu’à 6 chiffres), même avec une audience encore petite, en te basant sur mon diagnostic ci-dessus.
+
+Utilise une réflexion stratégique complète, pas une idée vague.
+
+⸻
+
+1. Analyse du marché (2026)
+
+Identifie des domaines :
+• où la demande est déjà présente
+• où les gens paient déjà pour résoudre ce problème
+• et où l’offre actuelle est mal expliquée, trop complexe ou mal positionnée
+
+Explique pourquoi ces domaines ont un fort potentiel en 2026.
+
+⸻
+
+2. Analyse de l’audience
+
+Décris précisément :
+• qui est l’audience cible
+• les problèmes qu’elle essaie de résoudre au quotidien
+• pourquoi elle n’obtient pas encore de résultats
+• et ce qui la pousserait à passer à l’action et à payer
+
+⸻
+
+3. Analyse de la concurrence
+
+Explique :
+• comment les concurrents se positionnent aujourd’hui
+• quels messages sont sur-utilisés
+• ce qui crée de la confusion ou de la méfiance chez l’audience
+
+⸻
+
+4. Opportunité de positionnement
+
+Propose un angle clair et simple :
+• une promesse compréhensible en une phrase
+• un positionnement facile à expliquer sur Instagram
+• une différence nette et crédible par rapport aux autres
+
+⸻
+
+5. Validation avec le contenu
+
+Explique comment tester cette niche sur Instagram :
+• quels types de Reels publier
+• quels messages mettre en avant
+• quels indicateurs analyser pour valider la demande
+
+⸻
+
+6. Synthèse et plan d’action
+• Donne la niche recommandée
+• pourquoi elle peut exploser en 2026
+• 3 idées de contenus à publier immédiatement
+• une piste simple pour monétiser
+
+Présente la réponse de manière claire, concrète et actionnable, comme si tu conseillais un entrepreneur débutant.`;
+        }
+        else if (currentTool === 'tab-bio') {
             const current = document.getElementById('bio-current').value;
             prompt = `PROMPT AUDIT DE TA BIO
 À COPIER / COLLER avec un screen de ta bio dans ChatGPT :
