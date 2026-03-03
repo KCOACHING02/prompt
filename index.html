@@ -4,26 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <title>Générateur de Prompts Marketing — Brille & Vibre</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     :root {
-      --primary: #d8b98b;
-      --primary-dark: #b79c84;
-      --success: #10b981;
-      --bg: #f3e9dd;
-      --card: #ffffff;
-      --text: #6b5a4a;
-      --text-light: #8a7664;
-      --border: #e0c9aa;
-      --dark: #2b2118;
+      --gold:        #C9A84C;
+      --gold-light:  #E8CC80;
+      --gold-pale:   #F5EDD4;
+      --cream:       #FAF6EF;
+      --beige:       #EDE4D3;
+      --black:       #0D0D0D;
+      --text:        #3A2E24;
+      --text-light:  #8C7560;
+      --border:      rgba(201,168,76,0.25);
+      --success:     #10b981;
+      --card:        #ffffff;
     }
 
     body {
       font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg);
+      background: var(--cream);
       color: var(--text);
       line-height: 1.5;
       display: flex;
@@ -40,20 +42,51 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      box-shadow: 0 10px 40px rgba(58,46,36,0.12);
       overflow: hidden;
     }
 
-    /* PROGRESS BAR */
-    .progress-bar { height: 5px; background: #f0e1cf; position: sticky; top: 0; z-index: 20; display: none; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-dark)); transition: width 0.4s cubic-bezier(.4,0,.2,1); border-radius: 0 10px 10px 0; }
+    /* ── BACK BAR ── */
+    .back-bar {
+      background: var(--black);
+      padding: 13px 20px;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      z-index: 30;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(250,250,245,0.6);
+      text-decoration: none;
+      padding: 7px 13px;
+      border-radius: 8px;
+      border: 1px solid rgba(201,168,76,0.25);
+      background: rgba(201,168,76,0.08);
+      transition: all 0.2s ease;
+    }
+    .back-btn:hover {
+      background: rgba(201,168,76,0.18);
+      border-color: rgba(201,168,76,0.5);
+      color: var(--gold-light);
+      transform: translateX(-2px);
+    }
+    .back-btn svg { width: 13px; height: 13px; stroke: currentColor; flex-shrink: 0; }
 
-    /* RECAP STRIP */
-    .recap-strip { display: none; background: #fdf5e8; border-bottom: 1px solid #f0dfc4; padding: 0.6rem 1.5rem; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+    /* ── PROGRESS BAR ── */
+    .progress-bar { height: 4px; background: var(--beige); position: sticky; top: 0; z-index: 20; display: none; flex-shrink: 0; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); transition: width 0.4s cubic-bezier(.4,0,.2,1); border-radius: 0 10px 10px 0; }
+
+    /* ── RECAP STRIP ── */
+    .recap-strip { display: none; background: var(--gold-pale); border-bottom: 1px solid rgba(201,168,76,0.3); padding: 0.55rem 1.5rem; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
     .recap-strip.visible { display: flex; animation: fadeIn 0.3s ease; }
-    .recap-chip { font-size: 0.75rem; font-weight: 600; color: #8a5c30; background: #fff3e0; border: 1px solid #e8c98a; border-radius: 20px; padding: 0.2rem 0.65rem; white-space: nowrap; }
+    .recap-chip { font-size: 0.73rem; font-weight: 600; color: #6b4a1e; background: rgba(255,255,255,0.7); border: 1px solid rgba(201,168,76,0.4); border-radius: 20px; padding: 0.18rem 0.6rem; white-space: nowrap; }
 
-    /* SCREEN TRANSITIONS */
+    /* ── TRANSITIONS ── */
     .screen { display: none; padding: 2rem 1.5rem 2.5rem; flex-grow: 1; flex-direction: column; }
     .screen.active { display: flex; animation: slideIn 0.28s cubic-bezier(.4,0,.2,1); }
     .screen.active.back { animation: slideBack 0.28s cubic-bezier(.4,0,.2,1); }
@@ -62,112 +95,358 @@
     @keyframes slideBack { from { opacity:0; transform:translateX(-28px); } to { opacity:1; transform:translateX(0); } }
     @keyframes fadeIn    { from { opacity:0; } to { opacity:1; } }
     @keyframes popIn     { 0% { transform:scale(0.92); opacity:0; } 100% { transform:scale(1); opacity:1; } }
+    @keyframes spin      { to { transform:rotate(360deg); } }
     @keyframes confettiDrop { 0% { opacity:1; transform:translateY(-10px) rotate(0deg); } 100% { opacity:0; transform:translateY(60px) rotate(360deg); } }
 
-    /* WELCOME */
-    #welcomeScreen { background: radial-gradient(circle at top, #f7eee3 0%, #f3e0c7 35%, #e4c7a3 100%); color:#4f3b2b; text-align:center; justify-content:center; align-items:center; }
-    .exclusive-badge { display:inline-block; background:linear-gradient(135deg,#d8b98b,#b79c84); color:white; font-size:0.72rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; padding:0.35rem 0.9rem; border-radius:20px; margin-bottom:1.2rem; }
-    .logo-large { font-size:4rem; margin-bottom:1.5rem; }
-    .welcome-title { font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; margin-bottom:0.75rem; line-height:1.2; }
-    .welcome-desc { font-size:1rem; opacity:0.9; margin-bottom:2rem; max-width:320px; margin-inline:auto; }
+    /* ── WELCOME ── */
+    #welcomeScreen {
+      background: var(--black);
+      color: var(--cream);
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2.5rem 1.5rem 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    #welcomeScreen::before {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(201,168,76,0.22) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    #welcomeScreen::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: -60px;
+      width: 240px; height: 240px;
+      background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
 
-    /* SESSION RESTORE */
-    .restore-banner { display:none; background:#fff8ec; border:1.5px solid #f0d49a; border-radius:14px; padding:0.9rem 1.1rem; margin-bottom:1.2rem; font-size:0.88rem; color:#7a5c2a; font-weight:500; cursor:pointer; text-align:left; width:100%; transition:background 0.2s; font-family:inherit; }
-    .restore-banner:hover { background:#fff2d4; }
-    .restore-banner strong { display:block; margin-bottom:0.2rem; font-size:0.95rem; }
+    /* Logo ring */
+    .logo-ring {
+      position: relative;
+      width: 96px;
+      height: 96px;
+      margin: 0 auto 20px;
+      z-index: 1;
+    }
+    .logo-ring::before {
+      content: '';
+      position: absolute; inset: -5px;
+      border-radius: 50%;
+      background: conic-gradient(var(--gold), var(--gold-light), var(--gold-pale), var(--gold), var(--gold-light), var(--gold));
+      animation: spin 8s linear infinite;
+    }
+    .logo-ring::after {
+      content: '';
+      position: absolute; inset: -3px;
+      border-radius: 50%;
+      background: var(--black);
+    }
+    .logo-img {
+      position: relative; z-index: 1;
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      object-fit: cover; object-position: center;
+      display: block;
+    }
 
-    /* FORM */
-    .question-label { font-size:1.2rem; font-weight:700; margin-bottom:1.5rem; color:var(--text); font-family:'Playfair Display',serif; }
-    .sublabel { font-size:0.88rem; font-weight:600; color:var(--text-light); margin-bottom:0.5rem; margin-top:0.3rem; display:block; }
-    .example-hint { font-size:0.78rem; color:#a07840; margin-bottom:0.8rem; cursor:pointer; display:inline-flex; align-items:center; gap:0.3rem; font-weight:600; }
-    .example-hint:hover { text-decoration:underline; }
+    .welcome-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 12px;
+      font-style: italic;
+      letter-spacing: 2px;
+      color: var(--gold);
+      margin-bottom: 6px;
+      position: relative; z-index: 1;
+    }
+    .exclusive-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: var(--black);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.85rem;
+      border-radius: 20px;
+      margin-bottom: 1.2rem;
+      position: relative; z-index: 1;
+    }
+    .welcome-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 6vw, 2.1rem);
+      font-weight: 900;
+      line-height: 1.15;
+      color: var(--cream);
+      margin-bottom: 0.6rem;
+      position: relative; z-index: 1;
+    }
+    .welcome-title em { color: var(--gold); font-style: italic; }
+    .welcome-desc {
+      font-size: 0.93rem;
+      color: rgba(250,246,239,0.65);
+      margin-bottom: 2rem;
+      max-width: 300px;
+      margin-inline: auto;
+      line-height: 1.6;
+      position: relative; z-index: 1;
+    }
+    .welcome-divider {
+      width: 40px; height: 2px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      border-radius: 2px;
+      margin: 0 auto 1.8rem;
+      position: relative; z-index: 1;
+    }
+    .welcome-actions { width: 100%; position: relative; z-index: 1; }
 
-    .field-wrap { position:relative; margin-bottom:1rem; }
-    .char-count { position:absolute; bottom:1rem; right:1rem; font-size:0.72rem; color:#b39a84; pointer-events:none; }
-    .char-count.warn { color:#e07a5f; }
+    /* ── SESSION RESTORE ── */
+    .restore-banner {
+      display: none;
+      background: rgba(201,168,76,0.1);
+      border: 1.5px solid rgba(201,168,76,0.35);
+      border-radius: 14px;
+      padding: 0.85rem 1rem;
+      margin-bottom: 1rem;
+      font-size: 0.86rem;
+      color: var(--gold-light);
+      font-weight: 500;
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+      transition: background 0.2s;
+      font-family: inherit;
+    }
+    .restore-banner:hover { background: rgba(201,168,76,0.18); }
+    .restore-banner strong { display: block; margin-bottom: 0.2rem; font-size: 0.92rem; color: var(--gold-light); }
 
-    input, textarea, select { width:100%; padding:1rem; border:1.5px solid var(--border); border-radius:14px; font-size:15px; margin-bottom:0; background:#f9f2e8; color:var(--text); transition:all 0.2s ease; font-family:inherit; }
-    input::placeholder, textarea::placeholder { color:#b39a84; }
-    input:focus, select:focus, textarea:focus { border-color:var(--primary); outline:none; background:#fffdf8; box-shadow:0 0 0 3px rgba(216,185,139,0.18); }
+    /* ── FORM ELEMENTS ── */
+    .question-label {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1.4rem;
+      color: var(--text);
+      font-family: 'Playfair Display', serif;
+    }
+    .sublabel { font-size: 0.85rem; font-weight: 600; color: var(--text-light); margin-bottom: 0.5rem; margin-top: 0.3rem; display: block; }
+    .example-hint { font-size: 0.76rem; color: var(--gold); margin-bottom: 0.8rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.3rem; font-weight: 600; }
+    .example-hint:hover { text-decoration: underline; }
 
-    .field-error { font-size:0.78rem; color:#e07a5f; font-weight:600; margin-top:0.3rem; margin-bottom:0.6rem; display:none; }
-    .field-error.visible { display:block; animation:fadeIn 0.2s; }
+    .field-wrap { position: relative; margin-bottom: 1rem; }
+    .char-count { position: absolute; bottom: 1rem; right: 1rem; font-size: 0.7rem; color: var(--text-light); pointer-events: none; font-family: 'DM Mono', monospace; }
+    .char-count.warn { color: #e07a5f; }
 
-    /* LIBRARY BOX */
-    .library-box { background:#fdf5e8; padding:1rem; border-radius:12px; border:1px dashed #d8b98b; margin-bottom:1.5rem; }
-    .library-box label { font-size:0.85rem; font-weight:800; color:#a0703f; display:block; margin-bottom:0.5rem; text-transform:uppercase; letter-spacing:0.04em; }
+    input, textarea, select {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      border: 1.5px solid var(--beige);
+      border-radius: 14px;
+      font-size: 15px;
+      margin-bottom: 0;
+      background: var(--cream);
+      color: var(--text);
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    input::placeholder, textarea::placeholder { color: var(--text-light); }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--gold);
+      outline: none;
+      background: #fffdf8;
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+    }
 
-    /* BUTTONS */
-    .btn { padding:1.05rem; border:none; border-radius:16px; font-weight:700; font-size:0.98rem; cursor:pointer; transition:all 0.2s; text-align:center; text-decoration:none; display:inline-block; font-family:inherit; width:100%; }
-    .btn-primary { background:linear-gradient(135deg,var(--primary),var(--primary-dark)); color:white; box-shadow:0 6px 16px rgba(107,90,74,0.25); }
-    .btn-primary:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 8px 20px rgba(107,90,74,0.3); }
-    .btn-outline { background:transparent; border:1.5px solid var(--border); color:var(--text-light); margin-top:0.75rem; }
-    .btn-outline:hover { background:#f9f2e8; }
-    .btn:disabled { background:#e4d4c2; color:#b39a84; box-shadow:none; cursor:not-allowed; border-color:#e4d4c2; }
-    .btn-success { background:var(--success); color:white; box-shadow:0 6px 16px rgba(16,185,129,0.25); }
+    .field-error { font-size: 0.76rem; color: #e07a5f; font-weight: 600; margin-top: 0.3rem; margin-bottom: 0.6rem; display: none; }
+    .field-error.visible { display: block; animation: fadeIn 0.2s; }
 
-    /* TOOL GRID */
-    .tool-grid { display:grid; grid-template-columns:1fr; gap:0.75rem; }
-    .tool-card { padding:1.1rem; border:1.5px solid var(--border); border-radius:16px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:0.9rem; background:#fdf7ef; color:var(--text); transition:all 0.22s ease; }
-    .tool-card .icon { font-size:1.4rem; flex-shrink:0; }
-    .tool-card .tool-name { flex:1; }
-    .tool-card .tool-check { width:22px; height:22px; border-radius:50%; background:var(--success); display:none; align-items:center; justify-content:center; font-size:0.75rem; color:white; flex-shrink:0; }
-    .tool-card:hover { border-color:var(--primary); background:#f9f0e3; transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,0.06); }
-    .tool-card.selected { border-color:var(--primary); background:linear-gradient(135deg,#fef7ed,#fdefd8); box-shadow:0 4px 14px rgba(216,185,139,0.3); animation:popIn 0.2s ease; }
-    .tool-card.selected .tool-check { display:flex; }
+    /* ── LIBRARY BOX ── */
+    .library-box {
+      background: var(--gold-pale);
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px dashed rgba(201,168,76,0.5);
+      margin-bottom: 1.2rem;
+    }
+    .library-box label { font-size: 0.82rem; font-weight: 800; color: #7a5010; display: block; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.04em; }
 
-    /* PROMPT OUTPUT */
-    .prompt-result-card { background:var(--dark); border-radius:16px; overflow:hidden; margin:0.75rem 0; flex-grow:1; display:flex; flex-direction:column; border:1px solid #4a3827; min-height:200px; }
-    .prompt-result-header { display:flex; align-items:center; justify-content:space-between; padding:0.75rem 1rem; background:#3a2a1c; border-bottom:1px solid #4a3827; }
-    .prompt-result-header span { color:#d8b98b; font-size:0.78rem; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; }
-    .prompt-toggle-btn { font-size:0.75rem; color:#d8b98b; background:transparent; border:1px solid #5a3f28; border-radius:8px; padding:0.25rem 0.6rem; cursor:pointer; font-weight:600; transition:background 0.2s; font-family:inherit; }
-    .prompt-toggle-btn:hover { background:#4a3020; }
+    /* ── BUTTONS ── */
+    .btn { padding: 1rem; border: none; border-radius: 16px; font-weight: 700; font-size: 0.96rem; cursor: pointer; transition: all 0.2s; text-align: center; text-decoration: none; display: inline-block; font-family: inherit; width: 100%; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: var(--black);
+      box-shadow: 0 6px 18px rgba(201,168,76,0.3);
+    }
+    .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(201,168,76,0.4); }
+    .btn-outline { background: transparent; border: 1.5px solid var(--beige); color: var(--text-light); margin-top: 0.75rem; }
+    .btn-outline:hover { background: var(--cream); border-color: var(--gold); color: var(--text); }
+    .btn:disabled { background: var(--beige); color: var(--text-light); box-shadow: none; cursor: not-allowed; }
+    .btn-success { background: var(--success); color: white; box-shadow: 0 6px 16px rgba(16,185,129,0.25); }
 
-    #promptOutput { color:#f8efe3; padding:1rem; font-size:0.88rem; overflow-y:auto; flex-grow:1; white-space:pre-wrap; line-height:1.65; max-height:340px; }
-    #promptOutput.code-mode { font-family:"SF Mono",ui-monospace,Menlo,Monaco,Consolas,monospace; font-size:0.82rem; }
-    #promptOutput.readable-mode { font-family:'DM Sans',sans-serif; font-size:0.92rem; background:#1e1510; }
+    /* Dark welcome buttons */
+    .btn-welcome-primary {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: var(--black);
+      font-weight: 700;
+      box-shadow: 0 6px 20px rgba(201,168,76,0.35);
+    }
+    .btn-welcome-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(201,168,76,0.45); }
+    .btn-welcome-outline {
+      background: transparent;
+      border: 1.5px solid rgba(201,168,76,0.3);
+      color: rgba(250,246,239,0.65);
+      margin-top: 0.75rem;
+    }
+    .btn-welcome-outline:hover { border-color: rgba(201,168,76,0.6); color: var(--gold-light); background: rgba(201,168,76,0.08); }
 
-    /* COPY FEEDBACK */
-    .copy-feedback { text-align:center; font-size:0.82rem; color:var(--success); font-weight:600; min-height:1.4rem; margin-bottom:0.4rem; opacity:0; transition:opacity 0.3s; }
-    .copy-feedback.visible { opacity:1; }
+    /* ── TOOL GRID ── */
+    .tool-grid { display: grid; grid-template-columns: 1fr; gap: 0.7rem; }
+    .tool-card {
+      padding: 1rem 1.1rem;
+      border: 1.5px solid var(--beige);
+      border-radius: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      background: var(--cream);
+      color: var(--text);
+      transition: all 0.22s ease;
+    }
+    .tool-card .icon { font-size: 1.3rem; flex-shrink: 0; }
+    .tool-card .tool-name { flex: 1; font-size: 0.95rem; }
+    .tool-card .tool-check {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--success);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      color: white;
+      flex-shrink: 0;
+    }
+    .tool-card:hover { border-color: var(--gold); background: var(--gold-pale); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(201,168,76,0.18); }
+    .tool-card.selected {
+      border-color: var(--gold);
+      background: linear-gradient(135deg, var(--gold-pale), rgba(232,204,128,0.2));
+      box-shadow: 0 4px 16px rgba(201,168,76,0.28);
+      animation: popIn 0.2s ease;
+    }
+    .tool-card.selected .tool-check { display: flex; }
 
-    /* AI BUTTONS */
-    .ai-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; margin-bottom:0.75rem; }
-    .ai-btn { padding:0.8rem; border-radius:12px; color:white; text-align:center; font-weight:700; font-size:0.8rem; cursor:pointer; border:none; display:flex; align-items:center; justify-content:center; gap:0.4rem; transition:opacity 0.2s, transform 0.15s; font-family:inherit; }
-    .ai-btn:hover { opacity:0.88; transform:translateY(-1px); }
+    /* ── PROMPT OUTPUT ── */
+    .prompt-result-card {
+      background: var(--black);
+      border-radius: 16px;
+      overflow: hidden;
+      margin: 0.75rem 0;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(201,168,76,0.2);
+      min-height: 200px;
+    }
+    .prompt-result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.7rem 1rem;
+      background: #1a1108;
+      border-bottom: 1px solid rgba(201,168,76,0.15);
+    }
+    .prompt-result-header span { color: var(--gold); font-size: 0.76rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+    .prompt-toggle-btn {
+      font-size: 0.72rem;
+      color: var(--gold);
+      background: transparent;
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 8px;
+      padding: 0.22rem 0.6rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+      font-family: inherit;
+    }
+    .prompt-toggle-btn:hover { background: rgba(201,168,76,0.1); }
 
-    /* CONFETTI */
-    .confetti-wrap { position:relative; margin-bottom:0.5rem; }
-    .confetti-piece { position:absolute; animation:confettiDrop 1.2s ease forwards; top:0; }
+    #promptOutput {
+      color: #f8efe3;
+      padding: 1rem;
+      font-size: 0.86rem;
+      overflow-y: auto;
+      flex-grow: 1;
+      white-space: pre-wrap;
+      line-height: 1.65;
+      max-height: 340px;
+    }
+    #promptOutput.code-mode { font-family: "DM Mono", ui-monospace, Menlo, Monaco, Consolas, monospace; font-size: 0.82rem; }
+    #promptOutput.readable-mode { font-family: 'DM Sans', sans-serif; font-size: 0.9rem; background: #1a1108; }
 
-    @media (max-width:480px) {
-      .screen { padding:1.5rem 1.1rem 2rem; }
-      .welcome-title { font-size:1.75rem; }
-      #promptOutput { font-size:0.82rem; max-height:260px; }
+    /* ── COPY FEEDBACK ── */
+    .copy-feedback { text-align: center; font-size: 0.8rem; color: var(--success); font-weight: 600; min-height: 1.4rem; margin-bottom: 0.4rem; opacity: 0; transition: opacity 0.3s; }
+    .copy-feedback.visible { opacity: 1; }
+
+    /* ── AI BUTTONS ── */
+    .ai-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .ai-btn { padding: 0.75rem; border-radius: 12px; color: white; text-align: center; font-weight: 700; font-size: 0.78rem; cursor: pointer; border: none; display: flex; align-items: center; justify-content: center; gap: 0.4rem; transition: opacity 0.2s, transform 0.15s; font-family: inherit; }
+    .ai-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    /* ── CONFETTI ── */
+    .confetti-wrap { position: relative; margin-bottom: 0.5rem; }
+    .confetti-piece { position: absolute; animation: confettiDrop 1.2s ease forwards; top: 0; }
+
+    @media (max-width: 480px) {
+      .screen { padding: 1.4rem 1rem 2rem; }
+      #promptOutput { font-size: 0.8rem; max-height: 260px; }
     }
   </style>
 </head>
 <body>
 <div class="container">
 
+  <!-- ── BACK BAR ── -->
+  <div class="back-bar">
+    <a href="https://kcoaching02.github.io/BAO_MENU/" class="back-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Boîte à Outils
+    </a>
+  </div>
+
   <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
   <div class="recap-strip" id="recapStrip"></div>
 
-  <!-- WELCOME -->
+  <!-- ── WELCOME ── -->
   <div class="screen active" id="welcomeScreen">
-    <div class="logo-large">✨</div>
+
+    <div class="logo-ring">
+      <img src="desert1.jpg" alt="Brille & Vibre" class="logo-img">
+    </div>
+
+    <p class="welcome-brand">Brille &amp; Vibre</p>
     <div class="exclusive-badge">Outil exclusif · Code Liberté</div>
-    <h1 class="welcome-title">Générateur de Prompts Marketing</h1>
+
+    <h1 class="welcome-title">Générateur de<br><em>Prompts Marketing</em></h1>
     <p class="welcome-desc">Crée des prompts clairs, puissants et alignés à ton business, en quelques étapes guidées.</p>
-    <button class="restore-banner" id="restoreBanner" onclick="restoreSession()">
-      <strong>🔄 Reprendre là où tu t'es arrêtée</strong>
-      <span id="restorePreview"></span>
-    </button>
-    <button class="btn btn-primary" onclick="startApp()">Lancer le générateur de prompts</button>
-    <a href="https://shop.beacons.ai/brilleetvibre/9cff3d0a-5313-4c90-9db5-7e6d5ec54309" class="btn btn-outline" style="color:#4f3b2b;border-color:#f5e0c4;margin-top:1rem" target="_blank">Découvrir Code Liberté</a>
+
+    <div class="welcome-divider"></div>
+
+    <div class="welcome-actions">
+      <button class="restore-banner" id="restoreBanner" onclick="restoreSession()">
+        <strong>🔄 Reprendre là où tu t'es arrêtée</strong>
+        <span id="restorePreview"></span>
+      </button>
+      <button class="btn btn-welcome-primary" onclick="startApp()">Lancer le générateur ✨</button>
+      <a href="https://shop.beacons.ai/brilleetvibre/9cff3d0a-5313-4c90-9db5-7e6d5ec54309" class="btn btn-welcome-outline" target="_blank">Découvrir Code Liberté →</a>
+    </div>
   </div>
 
-  <!-- AVATAR -->
+  <!-- ── AVATAR ── -->
   <div class="screen" id="stepAvatar">
     <label class="question-label">1. Qui est ton client idéal ?</label>
     <span class="example-hint" onclick="fillExample('avatarClient','Femmes entrepreneurs de 30-45 ans qui veulent lancer leur business en ligne et quitter le salariat')">💡 Voir un exemple</span>
@@ -179,7 +458,7 @@
     <button class="btn btn-primary" id="btnStepAvatar" onclick="goNext('stepOffer')" disabled>Suivant →</button>
   </div>
 
-  <!-- OFFRE -->
+  <!-- ── OFFRE ── -->
   <div class="screen" id="stepOffer">
     <label class="question-label">2. Que vends-tu précisément ?</label>
     <select id="offerType" onchange="validateStep('stepOffer')">
@@ -194,7 +473,7 @@
     <button class="btn btn-outline" onclick="goBack('stepAvatar')">← Retour</button>
   </div>
 
-  <!-- NICHE -->
+  <!-- ── NICHE ── -->
   <div class="screen" id="stepNiche">
     <label class="question-label">3. Quelle est ta thématique / niche ?</label>
     <span class="example-hint" onclick="fillExample('userNiche','Marketing digital & business en ligne')">💡 Voir un exemple</span>
@@ -204,7 +483,7 @@
     <button class="btn btn-outline" onclick="goBack('stepOffer')">← Retour</button>
   </div>
 
-  <!-- CHOIX OUTIL -->
+  <!-- ── CHOIX OUTIL ── -->
   <div class="screen" id="stepToolSelect">
     <label class="question-label">4. Quel outil souhaites-tu utiliser ?</label>
     <div class="tool-grid">
@@ -219,7 +498,7 @@
     <button class="btn btn-outline" onclick="goBack('stepNiche')" style="margin-top:1.5rem">← Retour</button>
   </div>
 
-  <!-- CONFIG OUTIL -->
+  <!-- ── CONFIG OUTIL ── -->
   <div class="screen" id="stepConfig">
 
     <div id="tab-niche-finder" class="tool-config" style="display:none">
@@ -303,7 +582,7 @@
     <button class="btn btn-outline" onclick="goBack('stepToolSelect')">← Changer d'outil</button>
   </div>
 
-  <!-- RÉSULTAT -->
+  <!-- ── RÉSULTAT ── -->
   <div class="screen" id="stepResult">
     <div class="confetti-wrap" id="confettiWrap">
       <label class="question-label" style="margin-bottom:0.3rem">Ton prompt est prêt ✨</label>
@@ -321,7 +600,7 @@
     <button class="btn btn-outline" onclick="resetAll()">↩ Recommencer de zéro</button>
   </div>
 
-</div>
+</div><!-- /container -->
 
 <script>
   let currentTool = '';
@@ -657,7 +936,7 @@ Texte brut, prêt à copier-coller.`;
     saveSession();
   }
 
-  /* ── TOGGLE PROMPT MODE ── */
+  /* ── TOGGLE MODE ── */
   function togglePromptMode() {
     isReadableMode = !isReadableMode;
     document.getElementById('promptOutput').className = isReadableMode ? 'readable-mode' : 'code-mode';
@@ -694,7 +973,7 @@ Texte brut, prêt à copier-coller.`;
   /* ── CONFETTI ── */
   function spawnConfetti() {
     const wrap = document.getElementById('confettiWrap');
-    const cols = ['#d8b98b','#10b981','#f59e0b','#ec4899','#6366f1'];
+    const cols = ['#C9A84C','#E8CC80','#10b981','#f59e0b','#ec4899'];
     for (let i=0; i<14; i++) {
       const el = document.createElement('div');
       el.className = 'confetti-piece';
