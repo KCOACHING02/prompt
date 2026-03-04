@@ -1,416 +1,161 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-  <title>Générateur de Prompts Marketing — Brille & Vibre</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<title>Générateur de Prompts — Brille & Vibre</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --gold:#C9A84C;--gl:#E8CC80;--gp:#F5EDD4;--gd:#9A7530;
+  --cream:#FAF6EF;--beige:#EDE4D3;--black:#0D0D0D;
+  --text:#3A2E24;--muted:#8C7560;--card:#ffffff;
+  --green:#10b981;
+}
+body{font-family:'Space Grotesk',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;display:flex;justify-content:center}
+.app{width:100%;max-width:520px;background:var(--card);min-height:100vh;display:flex;flex-direction:column;box-shadow:0 0 60px rgba(58,46,36,.1)}
 
-  <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+/* BACK BAR */
+.back-bar{background:var(--black);padding:12px 20px;display:flex;align-items:center;flex-shrink:0;z-index:40;position:sticky;top:0}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:rgba(250,246,239,.55);text-decoration:none;padding:6px 12px;border-radius:8px;border:1px solid rgba(201,168,76,.22);background:rgba(201,168,76,.07);transition:all .2s}
+.back-btn:hover{background:rgba(201,168,76,.16);border-color:rgba(201,168,76,.45);color:#E8CC80;transform:translateX(-2px)}
+.back-btn svg{width:12px;height:12px;stroke:currentColor;flex-shrink:0}
 
-    :root {
-      --gold:        #C9A84C;
-      --gold-light:  #E8CC80;
-      --gold-pale:   #F5EDD4;
-      --cream:       #FAF6EF;
-      --beige:       #EDE4D3;
-      --black:       #0D0D0D;
-      --text:        #3A2E24;
-      --text-light:  #8C7560;
-      --border:      rgba(201,168,76,0.25);
-      --success:     #10b981;
-      --card:        #ffffff;
-    }
+/* PROGRESS */
+.pbar{height:3px;background:var(--beige);flex-shrink:0}
+.pfill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gl));transition:width .4s cubic-bezier(.4,0,.2,1);border-radius:0 4px 4px 0;width:0%}
 
-    body {
-      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--cream);
-      color: var(--text);
-      line-height: 1.5;
-      display: flex;
-      justify-content: center;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+/* PERSONA STRIP */
+.pstrip{display:none;background:var(--gp);border-bottom:1px solid rgba(201,168,76,.25);padding:8px 20px;gap:6px;flex-wrap:wrap;align-items:center}
+.pstrip.on{display:flex}
+.ps-lbl{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gd);font-family:'DM Mono',monospace}
+.ps-chip{font-size:11px;font-weight:600;color:#6b4a1e;background:rgba(255,255,255,.65);border:1px solid rgba(201,168,76,.35);border-radius:20px;padding:2px 9px;white-space:nowrap}
 
-    .container {
-      width: 100%;
-      max-width: 520px;
-      background: var(--card);
-      min-height: 100vh;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 10px 40px rgba(58,46,36,0.12);
-      overflow: hidden;
-    }
+/* SCREENS */
+.screen{display:none;flex-direction:column;flex:1;overflow-y:auto}
+.screen.on{display:flex;animation:sIn .26s cubic-bezier(.4,0,.2,1)}
+.screen.back{animation:sBk .26s cubic-bezier(.4,0,.2,1)}
+@keyframes sIn{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:translateX(0)}}
+@keyframes sBk{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:translateX(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes cDrop{0%{opacity:1;transform:translateY(-8px) rotate(0)}100%{opacity:0;transform:translateY(55px) rotate(360deg)}}
 
-    /* ── BACK BAR ── */
-    .back-bar {
-      background: var(--black);
-      padding: 13px 20px;
-      display: flex;
-      align-items: center;
-      flex-shrink: 0;
-      z-index: 30;
-    }
-    .back-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 13px;
-      font-weight: 600;
-      color: rgba(250,250,245,0.6);
-      text-decoration: none;
-      padding: 7px 13px;
-      border-radius: 8px;
-      border: 1px solid rgba(201,168,76,0.25);
-      background: rgba(201,168,76,0.08);
-      transition: all 0.2s ease;
-    }
-    .back-btn:hover {
-      background: rgba(201,168,76,0.18);
-      border-color: rgba(201,168,76,0.5);
-      color: var(--gold-light);
-      transform: translateX(-2px);
-    }
-    .back-btn svg { width: 13px; height: 13px; stroke: currentColor; flex-shrink: 0; }
+/* WELCOME */
+#sW{background:var(--black);color:var(--cream);padding:2.5rem 1.5rem 3rem;align-items:center;text-align:center;position:relative;overflow:hidden;justify-content:center}
+#sW::before{content:'';position:absolute;top:-100px;right:-100px;width:380px;height:380px;background:radial-gradient(circle,rgba(201,168,76,.18) 0%,transparent 65%);pointer-events:none}
+#sW::after{content:'';position:absolute;bottom:-80px;left:-80px;width:280px;height:280px;background:radial-gradient(circle,rgba(201,168,76,.1) 0%,transparent 65%);pointer-events:none}
 
-    /* ── PROGRESS BAR ── */
-    .progress-bar { height: 4px; background: var(--beige); position: sticky; top: 0; z-index: 20; display: none; flex-shrink: 0; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); transition: width 0.4s cubic-bezier(.4,0,.2,1); border-radius: 0 10px 10px 0; }
+.logo-ring{position:relative;width:92px;height:92px;margin:0 auto 18px;z-index:1;flex-shrink:0}
+.logo-ring::before{content:'';position:absolute;inset:-5px;border-radius:50%;background:conic-gradient(var(--gold),var(--gl),var(--gp),var(--gold),var(--gl),var(--gold));animation:spin 8s linear infinite}
+.logo-ring::after{content:'';position:absolute;inset:-3px;border-radius:50%;background:var(--black)}
+.logo-img{position:relative;z-index:1;width:100%;height:100%;border-radius:50%;object-fit:cover;object-position:center 30%;display:block}
 
-    /* ── RECAP STRIP ── */
-    .recap-strip { display: none; background: var(--gold-pale); border-bottom: 1px solid rgba(201,168,76,0.3); padding: 0.55rem 1.5rem; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
-    .recap-strip.visible { display: flex; animation: fadeIn 0.3s ease; }
-    .recap-chip { font-size: 0.73rem; font-weight: 600; color: #6b4a1e; background: rgba(255,255,255,0.7); border: 1px solid rgba(201,168,76,0.4); border-radius: 20px; padding: 0.18rem 0.6rem; white-space: nowrap; }
+.w-brand{font-family:'Playfair Display',serif;font-size:11px;font-style:italic;letter-spacing:2.5px;color:var(--gold);margin-bottom:6px;position:relative;z-index:1}
+.w-badge{display:inline-block;background:linear-gradient(135deg,var(--gold),var(--gl));color:var(--black);font-size:.67rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:16px;position:relative;z-index:1}
+.w-title{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,7vw,2.2rem);font-weight:900;line-height:1.15;color:var(--cream);margin-bottom:8px;position:relative;z-index:1}
+.w-title em{color:var(--gold);font-style:italic}
+.w-desc{font-size:.88rem;color:rgba(250,246,239,.6);max-width:280px;line-height:1.65;margin-bottom:24px;position:relative;z-index:1}
+.w-div{width:36px;height:2px;background:linear-gradient(90deg,var(--gold),var(--gl));border-radius:2px;margin:0 auto 24px;position:relative;z-index:1}
 
-    /* ── TRANSITIONS ── */
-    .screen { display: none; padding: 2rem 1.5rem 2.5rem; flex-grow: 1; flex-direction: column; }
-    .screen.active { display: flex; animation: slideIn 0.28s cubic-bezier(.4,0,.2,1); }
-    .screen.active.back { animation: slideBack 0.28s cubic-bezier(.4,0,.2,1); }
+.p-ok{width:100%;background:rgba(201,168,76,.1);border:1.5px solid rgba(201,168,76,.35);border-radius:14px;padding:14px 16px;margin-bottom:18px;text-align:left;position:relative;z-index:1}
+.p-ok .lbl{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gl);margin-bottom:8px;font-family:'DM Mono',monospace}
+.p-ok .nm{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--cream);margin-bottom:3px}
+.p-ok .dt{font-size:12px;color:rgba(250,246,239,.75);line-height:1.5;margin-bottom:4px}
+.p-ok .ts{font-size:10px;color:rgba(201,168,76,.6);font-family:'DM Mono',monospace}
 
-    @keyframes slideIn   { from { opacity:0; transform:translateX(28px);  } to { opacity:1; transform:translateX(0); } }
-    @keyframes slideBack { from { opacity:0; transform:translateX(-28px); } to { opacity:1; transform:translateX(0); } }
-    @keyframes fadeIn    { from { opacity:0; } to { opacity:1; } }
-    @keyframes popIn     { 0% { transform:scale(0.92); opacity:0; } 100% { transform:scale(1); opacity:1; } }
-    @keyframes spin      { to { transform:rotate(360deg); } }
-    @keyframes confettiDrop { 0% { opacity:1; transform:translateY(-10px) rotate(0deg); } 100% { opacity:0; transform:translateY(60px) rotate(360deg); } }
+.p-no{width:100%;background:rgba(201,168,76,.08);border:1.5px dashed rgba(201,168,76,.45);border-radius:14px;padding:16px;margin-bottom:18px;text-align:left;position:relative;z-index:1}
+.p-no .lbl{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;font-family:'DM Mono',monospace}
+.p-no .txt{font-size:13px;color:rgba(250,246,239,.85);line-height:1.7;margin-bottom:6px}
+.p-no .hint{font-size:11px;color:rgba(201,168,76,.65)}
 
-    /* ── WELCOME ── */
-    #welcomeScreen {
-      background: var(--black);
-      color: var(--cream);
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 2.5rem 1.5rem 3rem;
-      position: relative;
-      overflow: hidden;
-    }
-    #welcomeScreen::before {
-      content: '';
-      position: absolute;
-      top: -80px; right: -80px;
-      width: 320px; height: 320px;
-      background: radial-gradient(circle, rgba(201,168,76,0.22) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    #welcomeScreen::after {
-      content: '';
-      position: absolute;
-      bottom: -60px; left: -60px;
-      width: 240px; height: 240px;
-      background: radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%);
-      pointer-events: none;
-    }
+.w-actions{width:100%;display:flex;flex-direction:column;gap:10px;position:relative;z-index:1}
 
-    /* Logo ring */
-    .logo-ring {
-      position: relative;
-      width: 96px;
-      height: 96px;
-      margin: 0 auto 20px;
-      z-index: 1;
-    }
-    .logo-ring::before {
-      content: '';
-      position: absolute; inset: -5px;
-      border-radius: 50%;
-      background: conic-gradient(var(--gold), var(--gold-light), var(--gold-pale), var(--gold), var(--gold-light), var(--gold));
-      animation: spin 8s linear infinite;
-    }
-    .logo-ring::after {
-      content: '';
-      position: absolute; inset: -3px;
-      border-radius: 50%;
-      background: var(--black);
-    }
-    .logo-img {
-      position: relative; z-index: 1;
-      width: 100%; height: 100%;
-      border-radius: 50%;
-      object-fit: cover; object-position: center;
-      display: block;
-    }
+/* BUTTONS */
+.btn{width:100%;padding:.95rem 1rem;border:none;border-radius:14px;font-weight:700;font-size:.92rem;cursor:pointer;transition:all .2s;text-align:center;text-decoration:none;display:block;font-family:'Space Grotesk',sans-serif;line-height:1.3}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gl));color:var(--black);box-shadow:0 5px 18px rgba(201,168,76,.32)}
+.btn-gold:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 7px 24px rgba(201,168,76,.44)}
+.btn-gold:disabled{background:var(--beige);color:var(--muted);box-shadow:none;cursor:not-allowed}
+.btn-dk{background:transparent;border:1.5px solid rgba(201,168,76,.28);color:rgba(250,246,239,.6)}
+.btn-dk:hover{border-color:rgba(201,168,76,.55);color:var(--gl);background:rgba(201,168,76,.08)}
+.btn-lt{background:transparent;border:1.5px solid var(--beige);color:var(--muted)}
+.btn-lt:hover{border-color:var(--gold);color:var(--text);background:var(--gp)}
+.btn-ok{background:var(--green);color:white;box-shadow:0 5px 16px rgba(16,185,129,.26)}
+.btn-ok:hover{transform:translateY(-1px);box-shadow:0 7px 22px rgba(16,185,129,.38)}
 
-    .welcome-brand {
-      font-family: 'Playfair Display', serif;
-      font-size: 12px;
-      font-style: italic;
-      letter-spacing: 2px;
-      color: var(--gold);
-      margin-bottom: 6px;
-      position: relative; z-index: 1;
-    }
-    .exclusive-badge {
-      display: inline-block;
-      background: linear-gradient(135deg, var(--gold), var(--gold-light));
-      color: var(--black);
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 0.3rem 0.85rem;
-      border-radius: 20px;
-      margin-bottom: 1.2rem;
-      position: relative; z-index: 1;
-    }
-    .welcome-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.6rem, 6vw, 2.1rem);
-      font-weight: 900;
-      line-height: 1.15;
-      color: var(--cream);
-      margin-bottom: 0.6rem;
-      position: relative; z-index: 1;
-    }
-    .welcome-title em { color: var(--gold); font-style: italic; }
-    .welcome-desc {
-      font-size: 0.93rem;
-      color: rgba(250,246,239,0.65);
-      margin-bottom: 2rem;
-      max-width: 300px;
-      margin-inline: auto;
-      line-height: 1.6;
-      position: relative; z-index: 1;
-    }
-    .welcome-divider {
-      width: 40px; height: 2px;
-      background: linear-gradient(90deg, var(--gold), var(--gold-light));
-      border-radius: 2px;
-      margin: 0 auto 1.8rem;
-      position: relative; z-index: 1;
-    }
-    .welcome-actions { width: 100%; position: relative; z-index: 1; }
+/* TOOL SELECT */
+#sT{padding:1.8rem 1.5rem 2rem}
+.sc-ttl{font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:700;color:var(--text);margin-bottom:4px}
+.sc-sub{font-size:.83rem;color:var(--muted);margin-bottom:1.4rem}
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.4rem}
+.tc{padding:.9rem 1rem;border:1.5px solid var(--beige);border-radius:14px;cursor:pointer;display:flex;align-items:center;gap:.7rem;background:var(--cream);transition:all .2s;position:relative}
+.tc .icon{font-size:1.2rem;flex-shrink:0}
+.tc .name{font-size:.85rem;font-weight:600;color:var(--text);flex:1;line-height:1.3}
+.tc .chk{position:absolute;top:8px;right:8px;width:18px;height:18px;border-radius:50%;background:var(--green);display:none;align-items:center;justify-content:center;font-size:.6rem;color:white;font-weight:700}
+.tc:hover{border-color:var(--gold);background:var(--gp);transform:translateY(-1px);box-shadow:0 4px 12px rgba(201,168,76,.16)}
+.tc.sel{border-color:var(--gold);background:linear-gradient(135deg,var(--gp),rgba(232,204,128,.2));box-shadow:0 4px 16px rgba(201,168,76,.24)}
+.tc.sel .chk{display:flex}
+.tc-full{grid-column:1/-1}
 
-    /* ── SESSION RESTORE ── */
-    .restore-banner {
-      display: none;
-      background: rgba(201,168,76,0.1);
-      border: 1.5px solid rgba(201,168,76,0.35);
-      border-radius: 14px;
-      padding: 0.85rem 1rem;
-      margin-bottom: 1rem;
-      font-size: 0.86rem;
-      color: var(--gold-light);
-      font-weight: 500;
-      cursor: pointer;
-      text-align: left;
-      width: 100%;
-      transition: background 0.2s;
-      font-family: inherit;
-    }
-    .restore-banner:hover { background: rgba(201,168,76,0.18); }
-    .restore-banner strong { display: block; margin-bottom: 0.2rem; font-size: 0.92rem; color: var(--gold-light); }
+/* CONFIG */
+#sC{padding:1.8rem 1.5rem 2rem;display:flex;flex-direction:column}
+.c-hd{margin-bottom:1.2rem}
+.c-em{font-size:1.5rem;margin-bottom:6px;display:block}
+.c-lbl{font-size:.7rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;font-family:'DM Mono',monospace}
+.c-ttl{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--text)}
 
-    /* ── FORM ELEMENTS ── */
-    .question-label {
-      font-size: 1.15rem;
-      font-weight: 700;
-      margin-bottom: 1.4rem;
-      color: var(--text);
-      font-family: 'Playfair Display', serif;
-    }
-    .sublabel { font-size: 0.85rem; font-weight: 600; color: var(--text-light); margin-bottom: 0.5rem; margin-top: 0.3rem; display: block; }
-    .example-hint { font-size: 0.76rem; color: var(--gold); margin-bottom: 0.8rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.3rem; font-weight: 600; }
-    .example-hint:hover { text-decoration: underline; }
+.persona-recap{background:var(--gp);border:1px solid rgba(201,168,76,.3);border-radius:12px;padding:12px 15px;margin-bottom:18px}
+.pr-lbl{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:7px;display:block;font-family:'DM Mono',monospace}
+.pr-chip{display:inline-block;margin:0 5px 4px 0;background:rgba(255,255,255,.7);border:1px solid rgba(201,168,76,.3);border-radius:20px;padding:2px 9px;font-size:11px;font-weight:600;color:#6b4a1e}
 
-    .field-wrap { position: relative; margin-bottom: 1rem; }
-    .char-count { position: absolute; bottom: 1rem; right: 1rem; font-size: 0.7rem; color: var(--text-light); pointer-events: none; font-family: 'DM Mono', monospace; }
-    .char-count.warn { color: #e07a5f; }
+.fw{margin-bottom:1rem}
+.flbl{display:block;font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:.45rem;letter-spacing:.3px}
+input,textarea,select{width:100%;padding:.82rem 1rem;border:1.5px solid var(--beige);border-radius:12px;font-size:.9rem;background:var(--cream);color:var(--text);font-family:'Space Grotesk',sans-serif;transition:all .2s;appearance:none;-webkit-appearance:none;resize:vertical}
+input::placeholder,textarea::placeholder{color:var(--muted);font-size:.85rem}
+input:focus,textarea:focus,select:focus{border-color:var(--gold);outline:none;background:#fffdf8;box-shadow:0 0 0 3px rgba(201,168,76,.12)}
+.ferr{font-size:.74rem;color:#e07a5f;font-weight:600;margin-top:.3rem;display:none}
+.ferr.on{display:block;animation:fadeUp .2s}
 
-    input, textarea, select {
-      width: 100%;
-      padding: 0.9rem 1rem;
-      border: 1.5px solid var(--beige);
-      border-radius: 14px;
-      font-size: 15px;
-      margin-bottom: 0;
-      background: var(--cream);
-      color: var(--text);
-      transition: all 0.2s ease;
-      font-family: inherit;
-    }
-    input::placeholder, textarea::placeholder { color: var(--text-light); }
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--gold);
-      outline: none;
-      background: #fffdf8;
-      box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
-    }
+.libbox{background:var(--gp);padding:.9rem;border-radius:11px;border:1px dashed rgba(201,168,76,.45);margin-bottom:1rem}
+.libbox .ll{font-size:.74rem;font-weight:800;color:#7a5010;display:block;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.03em}
 
-    .field-error { font-size: 0.76rem; color: #e07a5f; font-weight: 600; margin-top: 0.3rem; margin-bottom: 0.6rem; display: none; }
-    .field-error.visible { display: block; animation: fadeIn 0.2s; }
+.c-foot{margin-top:1.4rem;display:flex;flex-direction:column;gap:.65rem;position:sticky;bottom:0;background:var(--card);padding-top:.8rem;padding-bottom:.8rem;border-top:1px solid var(--beige)}
 
-    /* ── LIBRARY BOX ── */
-    .library-box {
-      background: var(--gold-pale);
-      padding: 1rem;
-      border-radius: 12px;
-      border: 1px dashed rgba(201,168,76,0.5);
-      margin-bottom: 1.2rem;
-    }
-    .library-box label { font-size: 0.82rem; font-weight: 800; color: #7a5010; display: block; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.04em; }
+/* RESULT */
+#sR{padding:1.5rem 1.5rem 2rem;display:flex;flex-direction:column}
+.r-hd{margin-bottom:.8rem;position:relative}
+.r-ttl{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--text);margin-bottom:2px}
+.r-sub{font-size:.8rem;color:var(--muted)}
 
-    /* ── BUTTONS ── */
-    .btn { padding: 1rem; border: none; border-radius: 16px; font-weight: 700; font-size: 0.96rem; cursor: pointer; transition: all 0.2s; text-align: center; text-decoration: none; display: inline-block; font-family: inherit; width: 100%; }
-    .btn-primary {
-      background: linear-gradient(135deg, var(--gold), var(--gold-light));
-      color: var(--black);
-      box-shadow: 0 6px 18px rgba(201,168,76,0.3);
-    }
-    .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(201,168,76,0.4); }
-    .btn-outline { background: transparent; border: 1.5px solid var(--beige); color: var(--text-light); margin-top: 0.75rem; }
-    .btn-outline:hover { background: var(--cream); border-color: var(--gold); color: var(--text); }
-    .btn:disabled { background: var(--beige); color: var(--text-light); box-shadow: none; cursor: not-allowed; }
-    .btn-success { background: var(--success); color: white; box-shadow: 0 6px 16px rgba(16,185,129,0.25); }
+.cfb{text-align:center;font-size:.78rem;color:var(--green);font-weight:600;min-height:1.3rem;margin-bottom:.5rem;opacity:0;transition:opacity .3s}
+.cfb.on{opacity:1}
 
-    /* Dark welcome buttons */
-    .btn-welcome-primary {
-      background: linear-gradient(135deg, var(--gold), var(--gold-light));
-      color: var(--black);
-      font-weight: 700;
-      box-shadow: 0 6px 20px rgba(201,168,76,0.35);
-    }
-    .btn-welcome-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(201,168,76,0.45); }
-    .btn-welcome-outline {
-      background: transparent;
-      border: 1.5px solid rgba(201,168,76,0.3);
-      color: rgba(250,246,239,0.65);
-      margin-top: 0.75rem;
-    }
-    .btn-welcome-outline:hover { border-color: rgba(201,168,76,0.6); color: var(--gold-light); background: rgba(201,168,76,0.08); }
+.aigrid{display:grid;grid-template-columns:1fr 1fr;gap:.45rem;margin-bottom:.8rem}
+.aibtn{padding:.72rem;border-radius:11px;color:white;font-weight:700;font-size:.74rem;cursor:pointer;border:none;display:flex;align-items:center;justify-content:center;gap:.35rem;transition:opacity .2s,transform .15s;font-family:'Space Grotesk',sans-serif}
+.aibtn:hover{opacity:.84;transform:translateY(-1px)}
 
-    /* ── TOOL GRID ── */
-    .tool-grid { display: grid; grid-template-columns: 1fr; gap: 0.7rem; }
-    .tool-card {
-      padding: 1rem 1.1rem;
-      border: 1.5px solid var(--beige);
-      border-radius: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.85rem;
-      background: var(--cream);
-      color: var(--text);
-      transition: all 0.22s ease;
-    }
-    .tool-card .icon { font-size: 1.3rem; flex-shrink: 0; }
-    .tool-card .tool-name { flex: 1; font-size: 0.95rem; }
-    .tool-card .tool-check {
-      width: 22px; height: 22px;
-      border-radius: 50%;
-      background: var(--success);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.72rem;
-      color: white;
-      flex-shrink: 0;
-    }
-    .tool-card:hover { border-color: var(--gold); background: var(--gold-pale); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(201,168,76,0.18); }
-    .tool-card.selected {
-      border-color: var(--gold);
-      background: linear-gradient(135deg, var(--gold-pale), rgba(232,204,128,0.2));
-      box-shadow: 0 4px 16px rgba(201,168,76,0.28);
-      animation: popIn 0.2s ease;
-    }
-    .tool-card.selected .tool-check { display: flex; }
+.pcard{background:var(--black);border-radius:14px;overflow:hidden;border:1px solid rgba(201,168,76,.18);margin-bottom:.8rem;display:flex;flex-direction:column;min-height:200px}
+.pcard-hd{display:flex;align-items:center;justify-content:space-between;padding:.65rem 1rem;background:#15100a;border-bottom:1px solid rgba(201,168,76,.13)}
+.pcard-hd span{color:var(--gold);font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;font-family:'DM Mono',monospace}
+.tbtn{font-size:.68rem;color:var(--gold);background:transparent;border:1px solid rgba(201,168,76,.28);border-radius:6px;padding:.2rem .55rem;cursor:pointer;font-weight:600;font-family:'Space Grotesk',sans-serif;transition:background .2s}
+.tbtn:hover{background:rgba(201,168,76,.1)}
+#pOut{color:#f0e8d8;padding:1rem;font-size:.82rem;overflow-y:auto;white-space:pre-wrap;line-height:1.7;max-height:340px}
+#pOut.mc{font-family:'DM Mono',monospace;font-size:.78rem}
+#pOut.mr{font-family:'Space Grotesk',sans-serif;font-size:.88rem;background:#1a1108;line-height:1.8}
 
-    /* ── PROMPT OUTPUT ── */
-    .prompt-result-card {
-      background: var(--black);
-      border-radius: 16px;
-      overflow: hidden;
-      margin: 0.75rem 0;
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      border: 1px solid rgba(201,168,76,0.2);
-      min-height: 200px;
-    }
-    .prompt-result-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.7rem 1rem;
-      background: #1a1108;
-      border-bottom: 1px solid rgba(201,168,76,0.15);
-    }
-    .prompt-result-header span { color: var(--gold); font-size: 0.76rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
-    .prompt-toggle-btn {
-      font-size: 0.72rem;
-      color: var(--gold);
-      background: transparent;
-      border: 1px solid rgba(201,168,76,0.3);
-      border-radius: 8px;
-      padding: 0.22rem 0.6rem;
-      cursor: pointer;
-      font-weight: 600;
-      transition: background 0.2s;
-      font-family: inherit;
-    }
-    .prompt-toggle-btn:hover { background: rgba(201,168,76,0.1); }
+.r-actions{display:flex;flex-direction:column;gap:.55rem}
 
-    #promptOutput {
-      color: #f8efe3;
-      padding: 1rem;
-      font-size: 0.86rem;
-      overflow-y: auto;
-      flex-grow: 1;
-      white-space: pre-wrap;
-      line-height: 1.65;
-      max-height: 340px;
-    }
-    #promptOutput.code-mode { font-family: "DM Mono", ui-monospace, Menlo, Monaco, Consolas, monospace; font-size: 0.82rem; }
-    #promptOutput.readable-mode { font-family: 'DM Sans', sans-serif; font-size: 0.9rem; background: #1a1108; }
-
-    /* ── COPY FEEDBACK ── */
-    .copy-feedback { text-align: center; font-size: 0.8rem; color: var(--success); font-weight: 600; min-height: 1.4rem; margin-bottom: 0.4rem; opacity: 0; transition: opacity 0.3s; }
-    .copy-feedback.visible { opacity: 1; }
-
-    /* ── AI BUTTONS ── */
-    .ai-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.75rem; }
-    .ai-btn { padding: 0.75rem; border-radius: 12px; color: white; text-align: center; font-weight: 700; font-size: 0.78rem; cursor: pointer; border: none; display: flex; align-items: center; justify-content: center; gap: 0.4rem; transition: opacity 0.2s, transform 0.15s; font-family: inherit; }
-    .ai-btn:hover { opacity: 0.88; transform: translateY(-1px); }
-
-    /* ── CONFETTI ── */
-    .confetti-wrap { position: relative; margin-bottom: 0.5rem; }
-    .confetti-piece { position: absolute; animation: confettiDrop 1.2s ease forwards; top: 0; }
-
-    @media (max-width: 480px) {
-      .screen { padding: 1.4rem 1rem 2rem; }
-      #promptOutput { font-size: 0.8rem; max-height: 260px; }
-    }
-  </style>
+@media(max-width:480px){
+  #sW{padding:2rem 1.2rem 2.5rem}
+  #sT,#sC,#sR{padding-left:1.2rem;padding-right:1.2rem}
+  #pOut{max-height:260px}
+}
+</style>
 </head>
 <body>
-<div class="container">
+<div class="app">
 
-  <!-- ── BACK BAR ── -->
   <div class="back-bar">
     <a href="https://kcoaching02.github.io/BAO_MENU/" class="back-btn">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
@@ -418,557 +163,591 @@
     </a>
   </div>
 
-  <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
-  <div class="recap-strip" id="recapStrip"></div>
+  <div class="pbar"><div class="pfill" id="pf"></div></div>
 
-  <!-- ── WELCOME ── -->
-  <div class="screen active" id="welcomeScreen">
+  <div class="pstrip" id="pstrip">
+    <span class="ps-lbl">✓ Client Idéal</span>
+    <span class="ps-chip" id="pc1"></span>
+    <span class="ps-chip" id="pc2" style="display:none"></span>
+  </div>
 
+  <!-- ÉCRAN 1 — ACCUEIL -->
+  <div class="screen on" id="sW">
     <div class="logo-ring">
       <img src="desert1.jpg" alt="Brille & Vibre" class="logo-img">
     </div>
+    <p class="w-brand">Brille &amp; Vibre</p>
+    <div class="w-badge">Outil exclusif · Code Liberté</div>
+    <h1 class="w-title">Générateur de<br><em>Prompts Marketing</em></h1>
+    <p class="w-desc">Des prompts sur-mesure, construits autour de ton Client Idéal.</p>
+    <div class="w-div"></div>
 
-    <p class="welcome-brand">Brille &amp; Vibre</p>
-    <div class="exclusive-badge">Outil exclusif · Code Liberté</div>
-
-    <h1 class="welcome-title">Générateur de<br><em>Prompts Marketing</em></h1>
-    <p class="welcome-desc">Crée des prompts clairs, puissants et alignés à ton business, en quelques étapes guidées.</p>
-
-    <div class="welcome-divider"></div>
-
-    <!-- Persona card -->
-    <!-- Persona défini -->
-    <div id="personaCard" style="display:none;background:var(--gold-pale);border:1.5px solid rgba(201,168,76,0.4);border-radius:14px;padding:14px 16px;margin-bottom:16px;width:100%">
-      <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;font-family:'DM Mono',monospace">✓ Client Idéal défini</div>
-      <div id="personaPreview" style="font-size:13px;color:var(--text);line-height:1.6"></div>
-      <div id="personaDate" style="font-size:11px;color:var(--text-light);margin-top:5px;font-family:'DM Mono',monospace"></div>
+    <div class="p-ok" id="pOk" style="display:none">
+      <div class="lbl">✓ Client Idéal chargé</div>
+      <div class="nm" id="pNm"></div>
+      <div class="dt" id="pDt"></div>
+      <div class="ts" id="pTs"></div>
     </div>
 
-    <!-- Pas de persona -->
-    <div id="noPersonaCard" style="display:none;background:rgba(201,168,76,0.1);border:1.5px dashed rgba(201,168,76,0.5);border-radius:14px;padding:18px 16px;margin-bottom:16px;width:100%;text-align:left">
-      <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light);margin-bottom:8px;font-family:'DM Mono',monospace">⚠ Client Idéal non défini</div>
-      <div style="font-size:13px;color:rgba(250,246,239,0.9);line-height:1.7;margin-bottom:8px">Le générateur personnalise chaque prompt en fonction de ton Client Idéal. Commence par remplir le quiz — ça prend 3 minutes.</div>
-      <div style="font-size:12px;color:rgba(201,168,76,0.75)">→ Tu seras redirigé(e) automatiquement.</div>
+    <div class="p-no" id="pNo" style="display:none">
+      <div class="lbl">⚠ Client Idéal non défini</div>
+      <div class="txt">Le générateur personnalise chaque prompt grâce à ton Client Idéal. Le quiz prend 3 minutes.</div>
+      <div class="hint">→ Tu seras redirigé(e) automatiquement.</div>
     </div>
 
-    <div class="welcome-actions">
-      <button class="btn btn-welcome-primary" id="btnStart" onclick="startApp()" style="display:none">Lancer le générateur ✨</button>
-      <a href="https://kcoaching02.github.io/BAO_PERSONA/" id="btnDefinePersona" style="display:none;text-align:center;text-decoration:none" class="btn btn-welcome-outline">→ Définir mon Client Idéal d'abord</a>
-      <a href="https://shop.beacons.ai/brilleetvibre/9cff3d0a-5313-4c90-9db5-7e6d5ec54309" class="btn btn-welcome-outline" target="_blank">Découvrir Code Liberté →</a>
+    <div class="w-actions">
+      <button class="btn btn-gold" id="btnS" onclick="startApp()">Générer mes prompts ✨</button>
+      <a href="https://kcoaching02.github.io/BAO_PERSONA/" id="btnP" style="display:none" class="btn btn-gold">Définir mon Client Idéal →</a>
+      <a href="https://shop.beacons.ai/brilleetvibre/9cff3d0a-5313-4c90-9db5-7e6d5ec54309" class="btn btn-dk" target="_blank">Découvrir Code Liberté →</a>
     </div>
   </div>
 
-  <!-- ── CHOIX OUTIL ── -->
-  <div class="screen" id="stepToolSelect">
-    <!-- Recap persona -->
-    <div id="personaRecap" style="background:var(--gold-pale);border:1.5px solid rgba(201,168,76,0.3);border-radius:12px;padding:11px 15px;margin-bottom:18px;font-size:13px;line-height:1.6;color:var(--text)"></div>
-    <label class="question-label">Quel outil souhaites-tu utiliser ?</label>
-    <div class="tool-grid">
-      <div class="tool-card" id="card-tab-niche-finder" onclick="pickTool('tab-niche-finder',this)"><span class="icon">🔍</span><span class="tool-name">Trouver ma Niche Business</span><div class="tool-check">✓</div></div>
-      <div class="tool-card" id="card-tab-bio"          onclick="pickTool('tab-bio',this)">         <span class="icon">📝</span><span class="tool-name">Auditer ma Bio</span><div class="tool-check">✓</div></div>
-      <div class="tool-card" id="card-tab-hooks"        onclick="pickTool('tab-hooks',this)">       <span class="icon">🎣</span><span class="tool-name">Créer des Hooks</span><div class="tool-check">✓</div></div>
-      <div class="tool-card" id="card-tab-caption"      onclick="pickTool('tab-caption',this)">     <span class="icon">✍️</span><span class="tool-name">Créer des Légendes</span><div class="tool-check">✓</div></div>
-      <div class="tool-card" id="card-tab-improve"      onclick="pickTool('tab-improve',this)">     <span class="icon">🪄</span><span class="tool-name">Perfectionner une Légende</span><div class="tool-check">✓</div></div>
-      <div class="tool-card" id="card-tab-reels"        onclick="pickTool('tab-reels',this)">       <span class="icon">🎥</span><span class="tool-name">Idées Reels / Carrousel</span><div class="tool-check">✓</div></div>
-      <div class="tool-card" id="card-tab-stories"      onclick="pickTool('tab-stories',this)">     <span class="icon">📱</span><span class="tool-name">Créer des Stories</span><div class="tool-check">✓</div></div>
+  <!-- ÉCRAN 2 — OUTILS -->
+  <div class="screen" id="sT">
+    <p class="sc-ttl">Quel prompt veux-tu créer ?</p>
+    <p class="sc-sub">Sélectionne un outil pour commencer</p>
+    <div class="tgrid">
+      <div class="tc" onclick="pickTool('niche',this)">  <span class="icon">🔍</span><span class="name">Trouver ma Niche</span>      <div class="chk">✓</div></div>
+      <div class="tc" onclick="pickTool('bio',this)">    <span class="icon">📝</span><span class="name">Auditer ma Bio</span>         <div class="chk">✓</div></div>
+      <div class="tc" onclick="pickTool('hooks',this)">  <span class="icon">🎣</span><span class="name">Créer des Hooks</span>        <div class="chk">✓</div></div>
+      <div class="tc" onclick="pickTool('caption',this)"><span class="icon">✍️</span><span class="name">Créer des Légendes</span>     <div class="chk">✓</div></div>
+      <div class="tc" onclick="pickTool('improve',this)"><span class="icon">🪄</span><span class="name">Améliorer une Légende</span>  <div class="chk">✓</div></div>
+      <div class="tc" onclick="pickTool('reels',this)">  <span class="icon">🎥</span><span class="name">Reels / Carrousel</span>     <div class="chk">✓</div></div>
+      <div class="tc tc-full" onclick="pickTool('stories',this)"><span class="icon">📱</span><span class="name">Créer des Stories</span><div class="chk">✓</div></div>
     </div>
-    <button class="btn btn-outline" onclick="goBack('welcomeScreen')" style="margin-top:1.5rem">← Retour</button>
+    <button class="btn btn-lt" onclick="goTo('sW',true)">← Retour</button>
   </div>
 
-  <!-- ── CONFIG OUTIL ── -->
-  <div class="screen" id="stepConfig">
-
-    <div id="tab-niche-finder" class="tool-config" style="display:none">
-      <label class="question-label">Diagnostic de ton profil</label>
-      <span class="sublabel">Tes compétences & expériences</span>
-      <textarea id="diag-skills" placeholder="Ex : Gestion de projet, Cuisine healthy, Vente immobilière..." rows="3" style="margin-bottom:1rem"></textarea>
-      <span class="sublabel">Ce qui te passionne ou t'attire</span>
-      <textarea id="diag-wants" placeholder="Ex : Aider les gens, travailler de n'importe où, le bien-être..." rows="3" style="margin-bottom:0"></textarea>
+  <!-- ÉCRAN 3 — CONFIG -->
+  <div class="screen" id="sC">
+    <div class="c-hd">
+      <span class="c-em" id="cEm"></span>
+      <div class="c-lbl" id="cLbl"></div>
+      <div class="c-ttl" id="cTtl"></div>
     </div>
 
-    <div id="tab-bio" class="tool-config" style="display:none">
-      <label class="question-label">Ma Bio actuelle</label>
-      <textarea id="bio-current" placeholder="Colle ta bio ici (facultatif si tu n'en as pas encore)..." rows="4" style="margin-bottom:0"></textarea>
+    <div class="persona-recap" id="pRecap">
+      <span class="pr-lbl">✓ Basé sur ton Client Idéal</span>
+      <div id="pRecapTxt"></div>
     </div>
 
-    <div id="tab-caption" class="tool-config" style="display:none">
-      <label class="question-label">Détails de la légende</label>
-      <input type="text" id="cap-hook-planned" placeholder="Phrase accroche de ta vidéo (hook)" style="margin-bottom:1rem">
-      <select id="cap-tone" style="margin-bottom:1rem"><option value="Inspirant">Inspirant</option><option value="Expert / Éducatif">Expert / Éducatif</option><option value="Humoristique">Humoristique</option><option value="Direct / Cash">Direct / Cash</option></select>
-      <textarea id="cap-infos" placeholder="Infos clés / anecdotes / contexte..." rows="3" style="margin-bottom:1rem"></textarea>
-      <input type="text" id="cap-cta" placeholder="CTA (ex : Commente GO, envoie-moi un DM...)" style="margin-bottom:0">
+    <!-- NICHE -->
+    <div id="cf-niche" class="cfp" style="display:none">
+      <div class="fw"><label class="flbl">Tes compétences &amp; expériences</label>
+        <textarea id="n-skills" placeholder="Ex : gestion de projet, cuisine healthy, vente immobilière…" rows="3"></textarea></div>
+      <div class="fw"><label class="flbl">Ce qui te passionne ou t'attire</label>
+        <textarea id="n-wants" placeholder="Ex : aider les gens, travailler de n'importe où, le bien-être…" rows="3"></textarea></div>
     </div>
 
-    <div id="tab-improve" class="tool-config" style="display:none">
-      <label class="question-label">Améliorer ma légende</label>
-      <textarea id="improve-text" placeholder="Colle ta légende existante ici..." rows="5" style="margin-bottom:1rem"></textarea>
-      <span class="sublabel">Objectif de l'amélioration</span>
-      <select id="improve-goal" style="margin-bottom:1rem"><option value="la structurer selon la méthode AIDA (Attention, Intérêt, Désir, Action)">Méthode AIDA</option><option value="la rendre plus dynamique et captivante">Plus dynamique / captivante</option><option value="mieux vendre mon offre">Plus de conversion / Vente</option><option value="la rendre plus courte et percutante">Plus courte et punchy</option></select>
-      <span class="sublabel">Ton souhaité</span>
-      <select id="improve-tone" style="margin-bottom:0"><option value="Professionnel mais accessible">Pro & Accessible</option><option value="Amical et chaleureux">Amical & Chaleureux</option><option value="Direct et sans filtre">Direct / Cash</option></select>
+    <!-- BIO -->
+    <div id="cf-bio" class="cfp" style="display:none">
+      <div class="fw"><label class="flbl">Ta bio actuelle <span style="font-weight:400;color:var(--muted)">(facultatif)</span></label>
+        <textarea id="b-cur" placeholder="Colle ta bio ici, ou laisse vide si tu n'en as pas encore…" rows="5"></textarea></div>
     </div>
 
-    <div id="tab-hooks" class="tool-config" style="display:none">
-      <label class="question-label">Paramètres Hooks</label>
-      <div class="library-box">
-        <label>💡 Bibliothèque de Hooks prêts à l'emploi</label>
-        <select id="hookLibrary" onchange="applyHookLibrary()">
-          <option value="">-- Choisir un modèle --</option>
+    <!-- HOOKS -->
+    <div id="cf-hooks" class="cfp" style="display:none">
+      <div class="libbox">
+        <span class="ll">💡 Modèles prêts à l'emploi</span>
+        <select id="h-lib" onchange="applyLib()">
+          <option value="">— Choisir un modèle —</option>
           <optgroup label="🔥 Stopscroller">
             <option value="Tu vas pas croire ce qui se passe après.">Tu vas pas croire ce qui se passe après.</option>
-            <option value="C'est peut-être le truc le plus important que tu verras aujourd'hui.">C'est peut-être le truc le plus important...</option>
-            <option value="Cette simple astuce m'a fait économisé des heures.">Cette simple astuce m'a fait économiser...</option>
+            <option value="C'est peut-être le truc le plus important que tu verras aujourd'hui.">C'est peut-être le truc le plus important…</option>
+            <option value="Cette simple astuce m'a fait économiser des heures.">Cette astuce m'a fait économiser des heures.</option>
             <option value="Cette erreur te coûte peut-être des milliers d'euros.">Cette erreur te coûte des milliers d'euros.</option>
-            <option value="Tout le monde fait cette erreur. Ne sois pas comme eux.">Tout le monde fait cette erreur...</option>
-            <option value="Personne n'en parle, mais c'est juste incroyable.">Personne n'en parle, incroyable.</option>
-            <option value="Regarde ça avant de perdre ton temps.">Regarde ça avant de perdre ton temps.</option>
-            <option value="Si ça te retourne pas le cerveau, rien d'autre ne le fera.">Si ça te retourne pas le cerveau...</option>
-            <option value="Je suis pas censé dire ça… mais tu dois l'entendre.">Je suis pas censé dire ça...</option>
-            <option value="Cette habitude m'a rendu méconnaissable en 90 jours.">Cette habitude m'a rendu méconnaissable...</option>
+            <option value="Tout le monde fait cette erreur. Ne sois pas comme eux.">Tout le monde fait cette erreur…</option>
+            <option value="Cette habitude m'a rendu méconnaissable en 90 jours.">Cette habitude m'a changé en 90 jours.</option>
           </optgroup>
           <optgroup label="🛠 Problème - Solution">
             <option value="Cette erreur te fait perdre des clients.">Cette erreur te fait perdre des clients.</option>
-            <option value="Arrête de scroller si tu galères avec ça.">Arrête de scroller si tu galères...</option>
+            <option value="Arrête de scroller si tu galères avec ça.">Arrête de scroller si tu galères…</option>
             <option value="Tu veux [résultat] ? N'essaie surtout pas ça, fais plutôt ça.">Tu veux [résultat] ? Fais plutôt ça.</option>
-            <option value="Voici pourquoi ton plan ne fonctionne pas.">Voici pourquoi ton plan ne fonctionne pas.</option>
             <option value="Tu galères avec [problème] ? Voici la solution.">Tu galères avec [problème] ?</option>
           </optgroup>
         </select>
       </div>
-      <input type="text" id="hook-topic" placeholder="Sujet du contenu (ou choisis ci-dessus)" style="margin-bottom:1rem">
-      <select id="hook-angle" style="margin-bottom:1rem"><option value="Curiosité">Curiosité</option><option value="Urgence / FOMO">Urgence / FOMO</option><option value="Contre-intuitif / Casser un mythe">Contre-intuitif</option><option value="Identification / Douleur directe">Identification / Douleur</option><option value="Preuve sociale / Résultat concret">Preuve sociale / Résultat</option></select>
-      <select id="hook-platform" style="margin-bottom:0"><option value="Instagram Reels">Instagram Reels</option><option value="TikTok">TikTok</option><option value="LinkedIn">LinkedIn</option></select>
+      <div class="fw"><label class="flbl">Sujet du contenu *</label>
+        <input type="text" id="h-topic" placeholder="Ex : se lancer dans le business en ligne…">
+        <div class="ferr" id="e-hook">⚠️ Remplis le sujet pour générer.</div></div>
+      <div class="fw"><label class="flbl">Angle</label>
+        <select id="h-angle">
+          <option value="Curiosité">Curiosité</option>
+          <option value="Urgence / FOMO">Urgence / FOMO</option>
+          <option value="Contre-intuitif / Casser un mythe">Contre-intuitif</option>
+          <option value="Identification / Douleur directe">Identification / Douleur</option>
+          <option value="Preuve sociale / Résultat concret">Preuve sociale / Résultat</option>
+        </select></div>
+      <div class="fw"><label class="flbl">Plateforme</label>
+        <select id="h-plat">
+          <option value="Instagram Reels">Instagram Reels</option>
+          <option value="TikTok">TikTok</option>
+          <option value="LinkedIn">LinkedIn</option>
+        </select></div>
     </div>
 
-    <div id="tab-reels" class="tool-config" style="display:none">
-      <label class="question-label">Paramètres stratégie</label>
-      <input type="text" id="reel-theme" placeholder="Thématique globale du contenu" style="margin-bottom:1rem">
-      <select id="reel-format" style="margin-bottom:1rem"><option value="Reels">Reels</option><option value="Carrousel">Carrousel</option></select>
-      <select id="reel-goal" style="margin-bottom:0"><option value="Viralité">Viralité</option><option value="Autorité">Autorité</option><option value="Conversion">Conversion</option></select>
+    <!-- CAPTION -->
+    <div id="cf-caption" class="cfp" style="display:none">
+      <div class="fw"><label class="flbl">Hook vidéo</label>
+        <input type="text" id="c-hook" placeholder="Ex : J'ai tout quitté pour ça…"></div>
+      <div class="fw"><label class="flbl">Ton</label>
+        <select id="c-tone">
+          <option value="Inspirant">Inspirant</option>
+          <option value="Expert / Éducatif">Expert / Éducatif</option>
+          <option value="Humoristique">Humoristique</option>
+          <option value="Direct / Cash">Direct / Cash</option>
+        </select></div>
+      <div class="fw"><label class="flbl">Infos / contexte</label>
+        <textarea id="c-infos" placeholder="Ce que tu veux aborder dans la légende…" rows="3"></textarea></div>
+      <div class="fw"><label class="flbl">CTA</label>
+        <input type="text" id="c-cta" placeholder="Ex : Commente GO, envoie-moi un DM…"></div>
     </div>
 
-    <div id="tab-stories" class="tool-config" style="display:none">
-      <label class="question-label">Paramètres Stories</label>
-      <input type="text" id="story-context" placeholder="Sujet de la story (ex : se lancer, dépasser ses blocages...)" style="margin-bottom:1rem">
-      <select id="story-cta-type" style="margin-bottom:1rem"><option value="Réponds à cette story">Répondre à la story</option><option value="Envoie-moi un DM">Envoyer un DM</option><option value="Clique sur le lien en bio">Lien en bio</option><option value="Réponds avec le mot-clé en commentaire">Mot-clé en commentaire</option></select>
-      <input type="text" id="story-offer" placeholder="Ton offre liée (ex : Code Liberté, ton coaching...)" style="margin-bottom:0">
+    <!-- IMPROVE -->
+    <div id="cf-improve" class="cfp" style="display:none">
+      <div class="fw"><label class="flbl">Ta légende à améliorer *</label>
+        <textarea id="i-text" placeholder="Colle ta légende existante ici…" rows="6"></textarea>
+        <div class="ferr" id="e-impr">⚠️ Colle ta légende pour générer.</div></div>
+      <div class="fw"><label class="flbl">Objectif</label>
+        <select id="i-goal">
+          <option value="la structurer selon la méthode AIDA (Attention, Intérêt, Désir, Action)">Méthode AIDA</option>
+          <option value="la rendre plus dynamique et captivante">Plus dynamique / captivante</option>
+          <option value="mieux vendre mon offre">Plus de conversion</option>
+          <option value="la rendre plus courte et percutante">Plus courte et punchy</option>
+        </select></div>
+      <div class="fw"><label class="flbl">Ton</label>
+        <select id="i-tone">
+          <option value="Professionnel mais accessible">Pro &amp; Accessible</option>
+          <option value="Amical et chaleureux">Amical &amp; Chaleureux</option>
+          <option value="Direct et sans filtre">Direct / Cash</option>
+        </select></div>
     </div>
 
-    <div class="field-error" id="configError" style="margin-top:1rem">⚠️ Remplis les champs requis avant de générer.</div>
-    <button class="btn btn-primary" onclick="generateNow()" style="margin-top:1rem">Générer mon prompt ✨</button>
-    <button class="btn btn-outline" onclick="goBack('stepToolSelect')">← Changer d'outil</button>
+    <!-- REELS -->
+    <div id="cf-reels" class="cfp" style="display:none">
+      <div class="fw"><label class="flbl">Thématique *</label>
+        <input type="text" id="r-theme" placeholder="Ex : les pièges à éviter quand on se lance…">
+        <div class="ferr" id="e-reel">⚠️ Remplis la thématique pour générer.</div></div>
+      <div class="fw"><label class="flbl">Format</label>
+        <select id="r-fmt">
+          <option value="Reels">Reels</option>
+          <option value="Carrousel">Carrousel</option>
+        </select></div>
+      <div class="fw"><label class="flbl">Objectif</label>
+        <select id="r-goal">
+          <option value="Viralité">Viralité</option>
+          <option value="Autorité">Autorité</option>
+          <option value="Conversion">Conversion</option>
+        </select></div>
+    </div>
+
+    <!-- STORIES -->
+    <div id="cf-stories" class="cfp" style="display:none">
+      <div class="fw"><label class="flbl">Sujet de la story</label>
+        <input type="text" id="s-subj" placeholder="Ex : se lancer, dépasser ses blocages…"></div>
+      <div class="fw"><label class="flbl">CTA</label>
+        <select id="s-cta">
+          <option value="Réponds à cette story">Répondre à la story</option>
+          <option value="Envoie-moi un DM">Envoyer un DM</option>
+          <option value="Clique sur le lien en bio">Lien en bio</option>
+          <option value="Réponds avec le mot-clé en commentaire">Mot-clé en commentaire</option>
+        </select></div>
+      <div class="fw"><label class="flbl">Ton offre liée</label>
+        <input type="text" id="s-offer" placeholder="Ex : Code Liberté, ton coaching…"></div>
+    </div>
+
+    <div class="c-foot">
+      <button class="btn btn-gold" id="btnGen" onclick="generate()">✨ Générer mon prompt</button>
+      <button class="btn btn-lt" onclick="goTo('sT',true)">← Changer d'outil</button>
+    </div>
   </div>
 
-  <!-- ── RÉSULTAT ── -->
-  <div class="screen" id="stepResult">
-    <div class="confetti-wrap" id="confettiWrap">
-      <label class="question-label" style="margin-bottom:0.3rem">Ton prompt est prêt ✨</label>
+  <!-- ÉCRAN 4 — RÉSULTAT -->
+  <div class="screen" id="sR">
+    <div class="r-hd" id="cwrap">
+      <p class="r-ttl">Ton prompt est prêt ✨</p>
+      <p class="r-sub">Copie-le et colle-le dans l'IA de ton choix.</p>
     </div>
-    <button class="btn btn-success" onclick="copyToClipboard()" id="copyBtn" style="margin-bottom:0.3rem">📋 Copier le prompt</button>
-    <div class="copy-feedback" id="copyFeedback">✅ Copié ! Colle-le dans l'IA de ton choix 👇</div>
-    <div class="ai-grid" id="aiButtons"></div>
-    <div class="prompt-result-card">
-      <div class="prompt-result-header">
+    <button class="btn btn-ok" id="cpyBtn" onclick="copyP()" style="margin-bottom:.4rem">📋 Copier le prompt</button>
+    <div class="cfb" id="cfb">✅ Copié ! Colle-le dans ChatGPT, Claude ou Gemini 👇</div>
+    <div class="aigrid" id="aig"></div>
+    <div class="pcard">
+      <div class="pcard-hd">
         <span>Prompt généré</span>
-        <button class="prompt-toggle-btn" id="toggleModeBtn" onclick="togglePromptMode()">Mode lecture</button>
+        <button class="tbtn" id="tBtn" onclick="toggleMode()">Mode lecture</button>
       </div>
-      <div id="promptOutput" class="code-mode"></div>
+      <div id="pOut" class="mc"></div>
     </div>
-    <button class="btn btn-outline" onclick="resetAll()">↩ Recommencer de zéro</button>
+    <div class="r-actions">
+      <button class="btn btn-lt" onclick="goTo('sT',true)">← Créer un autre prompt</button>
+      <button class="btn btn-lt" onclick="goTo('sW',true)" style="font-size:.82rem;padding:.78rem">↩ Retour à l'accueil</button>
+    </div>
   </div>
 
-</div><!-- /container -->
-
+</div>
 <script>
-  let currentTool = '';
-  let isReadableMode = false;
-  let persona = null; // chargé depuis localStorage bv_persona
+let persona=null, tool='', rMode=false;
+const PG={sW:0,sT:33,sC:66,sR:100};
 
-  const SCREENS = ['welcomeScreen','stepToolSelect','stepConfig','stepResult'];
-
-  /* ── PERSONA ── */
-  function loadPersona() {
-    try {
-      const raw = localStorage.getItem('bv_persona');
-      if (!raw) return null;
-      return JSON.parse(raw);
-    } catch(e) { return null; }
-  }
-
-  function buildPersonaContext(p) {
-    // Construit un texte riche à injecter dans les prompts
-    const parts = [];
-    parts.push(`Situation : ${p.situation}`);
-    if (p.motivations && p.motivations.length) parts.push(`Motivations principales : ${p.motivations.join(', ')}`);
-    if (p.freins && p.freins.length) parts.push(`Freins identifiés : ${p.freins.join(', ')}`);
-    if (p.croyances && p.croyances.length) parts.push(`Croyances limitantes : ${p.croyances.join(', ')}`);
-    if (p.ressentis && p.ressentis.length) parts.push(`Ressenti quotidien : ${p.ressentis.join(', ')}`);
-    if (p.visions && p.visions.length) parts.push(`Transformation désirée : ${p.visions.join(', ')}`);
-    if (p.strategie) parts.push(`Angle de contenu recommandé : ${p.strategie}`);
-    return parts.join('\n');
-  }
-
-  function buildAvatarSummary(p) {
-    // Résumé court pour la strip recap
-    const mots = [p.situation];
-    if (p.motivations && p.motivations[0]) mots.push(p.motivations[0]);
-    return mots.join(' · ');
-  }
-
-  /* ── INIT ── */
-  document.addEventListener('DOMContentLoaded', () => {
-    persona = loadPersona();
-    if (persona) {
-      // Afficher la card persona
-      document.getElementById('personaCard').style.display = 'block';
-      document.getElementById('personaPreview').textContent =
-        `${persona.nom} · ${persona.situation}` +
-        (persona.motivations && persona.motivations[0] ? ` · ${persona.motivations[0]}` : '');
-      document.getElementById('personaDate').textContent =
-        'Défini le ' + new Date(persona.ts).toLocaleDateString('fr-FR',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
-      document.getElementById('btnStart').style.display = 'block';
-      // Pré-remplir le recap dans stepToolSelect
-      document.getElementById('personaRecap').innerHTML =
-        `<span style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-family:'DM Mono',monospace;display:block;margin-bottom:6px">✓ Client Idéal chargé</span>` +
-        `<strong>${persona.nom}</strong> — ${persona.situation}` +
-        (persona.motivations && persona.motivations.length ? `<br><span style="color:var(--text-light);font-size:12px">${persona.motivations.slice(0,2).join(' · ')}</span>` : '');
-    } else {
-      // Pas de persona : montrer l'invitation et le bouton dédié
-      document.getElementById('noPersonaCard').style.display = 'block';
-      document.getElementById('btnStart').style.display = 'none';
-      const btnDef = document.getElementById('btnDefinePersona');
-      btnDef.style.display = 'block';
-      btnDef.className = 'btn btn-welcome-primary';
-      btnDef.style.textAlign = 'center';
+document.addEventListener('DOMContentLoaded',()=>{
+  try{ const r=localStorage.getItem('bv_persona'); if(r) persona=JSON.parse(r); }catch(e){}
+  if(persona){
+    document.getElementById('pOk').style.display='block';
+    document.getElementById('pNm').textContent=persona.nom||'';
+    document.getElementById('pDt').textContent=persona.situation+(persona.motivations&&persona.motivations[0]?' · '+persona.motivations[0]:'');
+    document.getElementById('pTs').textContent='Défini le '+new Date(persona.ts).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+    document.getElementById('btnS').style.display='block';
+    document.getElementById('btnP').style.display='none';
+    // Strip
+    document.getElementById('pc1').textContent=persona.situation||'';
+    if(persona.motivations&&persona.motivations[0]){
+      document.getElementById('pc2').textContent=persona.motivations[0];
+      document.getElementById('pc2').style.display='inline-block';
     }
-  });
+    // Recap chips dans config
+    const chips=[];
+    if(persona.situation) chips.push(persona.situation);
+    if(persona.motivations&&persona.motivations.length) persona.motivations.slice(0,2).forEach(m=>chips.push(m));
+    if(persona.freins&&persona.freins.length) chips.push('Frein : '+persona.freins[0]);
+    if(persona.visions&&persona.visions.length) chips.push('Vision : '+persona.visions[0]);
+    document.getElementById('pRecapTxt').innerHTML=chips.map(c=>`<span class="pr-chip">${c}</span>`).join('');
+  } else {
+    document.getElementById('pNo').style.display='block';
+    document.getElementById('btnS').style.display='none';
+    document.getElementById('btnP').style.display='block';
+  }
+});
 
-  /* ── NAVIGATION ── */
-  function showScreen(id, back) {
-    const prev = document.querySelector('.screen.active');
-    if (prev) prev.classList.remove('active','back');
-    const next = document.getElementById(id);
-    next.classList.remove('back');
-    if (back) next.classList.add('back');
-    next.classList.add('active');
-    updateProgress(id);
-    updateRecapStrip(id);
-    window.scrollTo(0,0);
-  }
-  function startApp() {
-    if (!persona) { window.location.href = 'https://kcoaching02.github.io/BAO_PERSONA/'; return; }
-    showScreen('stepToolSelect', false);
-  }
-  function goBack(id) { showScreen(id, true); }
+function goTo(id,back){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on','back'));
+  const el=document.getElementById(id);
+  if(back) el.classList.add('back');
+  el.classList.add('on');
+  document.getElementById('pf').style.width=(PG[id]||0)+'%';
+  const strip=document.getElementById('pstrip');
+  (persona&&id!=='sW')?strip.classList.add('on'):strip.classList.remove('on');
+  window.scrollTo(0,0);
+}
 
-  function updateProgress(id) {
-    const idx = SCREENS.indexOf(id);
-    document.getElementById('progressFill').style.width = (idx / (SCREENS.length-1) * 100) + '%';
-    document.getElementById('progressBar').style.display = id === 'welcomeScreen' ? 'none' : 'block';
-  }
+function startApp(){
+  if(!persona){window.location.href='https://kcoaching02.github.io/BAO_PERSONA/';return;}
+  goTo('sT',false);
+}
 
-  function updateRecapStrip(id) {
-    const strip = document.getElementById('recapStrip');
-    if (!persona || !['stepToolSelect','stepConfig','stepResult'].includes(id)) { strip.classList.remove('visible'); return; }
-    const chips = [persona.situation];
-    if (persona.motivations && persona.motivations[0]) chips.push(persona.motivations[0]);
-    if (persona.strategie) chips.push(persona.strategie);
-    strip.innerHTML = chips.map(c => `<div class="recap-chip">${c}</div>`).join('');
-    strip.classList.add('visible');
-  }
+function pickTool(id,card){
+  document.querySelectorAll('.tc').forEach(c=>c.classList.remove('sel'));
+  card.classList.add('sel');
+  tool=id;
+  const INFO={
+    niche:  {em:'🔍',lbl:'Niche & Positionnement',ttl:'Trouver ta niche idéale'},
+    bio:    {em:'📝',lbl:'Bio Instagram',           ttl:'Optimiser ta bio'},
+    hooks:  {em:'🎣',lbl:'Hooks viraux',            ttl:'Créer des hooks percutants'},
+    caption:{em:'✍️',lbl:'Légende Instagram',       ttl:'Rédiger une légende alignée'},
+    improve:{em:'🪄',lbl:'Optimisation',            ttl:'Améliorer une légende existante'},
+    reels:  {em:'🎥',lbl:'Stratégie contenu',       ttl:'Idées de Reels / Carrousel'},
+    stories:{em:'📱',lbl:'Stories',                 ttl:'Stories qui convertissent'},
+  };
+  const t=INFO[id];
+  document.getElementById('cEm').textContent=t.em;
+  document.getElementById('cLbl').textContent=t.lbl;
+  document.getElementById('cTtl').textContent=t.ttl;
+  document.querySelectorAll('.cfp').forEach(p=>p.style.display='none');
+  document.getElementById('cf-'+id).style.display='block';
+  setTimeout(()=>goTo('sC',false),140);
+}
 
-  /* ── VALIDATION CONFIG ── */
-  function validateConfig() {
-    const checks = {
-      'tab-hooks':   () => document.getElementById('hook-topic').value.trim().length > 2,
-      'tab-reels':   () => document.getElementById('reel-theme').value.trim().length > 2,
-      'tab-improve': () => document.getElementById('improve-text').value.trim().length > 10,
-    };
-    const ok = !checks[currentTool] || checks[currentTool]();
-    document.getElementById('configError').classList.toggle('visible', !ok);
-    return ok;
-  }
+function applyLib(){
+  const v=document.getElementById('h-lib').value;
+  if(v) document.getElementById('h-topic').value=v;
+}
 
-  /* ── TOOL PICK ── */
-  function pickTool(toolId, card) {
-    document.querySelectorAll('.tool-card').forEach(c => c.classList.remove('selected'));
-    card.classList.add('selected');
-    currentTool = toolId;
-    setTimeout(() => {
-      document.querySelectorAll('.tool-config').forEach(c => c.style.display = 'none');
-      document.getElementById(toolId).style.display = 'block';
-      showScreen('stepConfig', false);
-    }, 160);
-  }
-  function applyHookLibrary() {
-    const v = document.getElementById('hookLibrary').value;
-    if (v) document.getElementById('hook-topic').value = v;
-  }
-  function resetAll() {
-    showScreen('welcomeScreen', true);
-  }
+function ctx(){
+  if(!persona) return 'Client idéal non défini.';
+  const p=[];
+  p.push('Situation : '+persona.situation);
+  if(persona.motivations&&persona.motivations.length) p.push('Motivations : '+persona.motivations.join(', '));
+  if(persona.freins&&persona.freins.length)           p.push('Freins : '+persona.freins.join(', '));
+  if(persona.croyances&&persona.croyances.length)     p.push('Croyances limitantes : '+persona.croyances.join(', '));
+  if(persona.ressentis&&persona.ressentis.length)     p.push('Ressenti quotidien : '+persona.ressentis.join(', '));
+  if(persona.visions&&persona.visions.length)         p.push('Transformation désirée : '+persona.visions.join(', '));
+  if(persona.strategie)                               p.push('Angle recommandé : '+persona.strategie);
+  if(persona.bio)                                     p.push('Portrait : '+persona.bio);
+  return p.join('\n');
+}
 
-  /* ── GENERATE ── */
-  function generateNow() {
-    if (!validateConfig()) return;
-    if (!persona) { window.location.href = 'https://kcoaching02.github.io/BAO_PERSONA/'; return; }
-    const ctx = buildPersonaContext(persona);
-    const freinsStr = persona.freins && persona.freins.length
-      ? persona.freins.slice(0,2).join(', ')
-      : 'ses freins émotionnels';
-    let p = '';
+function freins(){
+  return (persona&&persona.freins&&persona.freins.length)?persona.freins.slice(0,2).join(', '):'ses freins émotionnels';
+}
 
-    if (currentTool === 'tab-niche-finder') {
-      const skills = document.getElementById('diag-skills').value;
-      const wants  = document.getElementById('diag-wants').value;
-      p = `Agis comme un expert en stratégie business et en positionnement, spécialisé dans la création de business basés sur le contenu et Instagram en 2026.
+function validate(){
+  document.querySelectorAll('.ferr').forEach(e=>e.classList.remove('on'));
+  if(tool==='hooks'  &&document.getElementById('h-topic').value.trim().length<3){document.getElementById('e-hook').classList.add('on');return false;}
+  if(tool==='improve'&&document.getElementById('i-text').value.trim().length<10){document.getElementById('e-impr').classList.add('on');return false;}
+  if(tool==='reels'  &&document.getElementById('r-theme').value.trim().length<3){document.getElementById('e-reel').classList.add('on');return false;}
+  return true;
+}
+
+function generate(){
+  if(!validate()) return;
+  const btn=document.getElementById('btnGen');
+  btn.textContent='⏳ Génération en cours…';
+  btn.disabled=true;
+  setTimeout(()=>{btn.textContent='✨ Générer mon prompt';btn.disabled=false;},900);
+
+  const C=ctx(), F=freins();
+  let p='';
+
+  if(tool==='niche'){
+    const sk=document.getElementById('n-skills').value.trim()||'Non précisé';
+    const wt=document.getElementById('n-wants').value.trim()||'Non précisé';
+    p=`Agis comme un expert en stratégie business et positionnement Instagram en 2026.
 
 MON CLIENT IDÉAL :
-${ctx}
+${C}
 
-MON PROFIL PERSONNEL :
-- Mes compétences et expériences : ${skills}
-- Ce que je souhaite et mes centres d'intérêt : ${wants}
+MON PROFIL :
+- Compétences : ${sk}
+- Passions : ${wt}
 
-Aide-moi à identifier une niche claire, rentable et durable en tenant compte à la fois de mon profil ET du client idéal décrit ci-dessus.
+─────────────────────────────
+1. ANALYSE DU MARCHÉ
+─────────────────────────────
+Identifie des domaines où :
+• la demande est présente et les gens paient déjà
+• l'offre actuelle est mal expliquée ou mal positionnée
+• mon client idéal cherche activement des solutions
 
-⸻
-
-1. Analyse du marché (2026)
-
-Identifie des domaines :
-• où la demande est déjà présente
-• où les gens paient déjà pour résoudre ce problème
-• et où l'offre actuelle est mal expliquée, trop complexe ou mal positionnée
-
-⸻
-
-2. Analyse de l'audience
-
-En t'appuyant sur le profil de mon client idéal :
-• ses problèmes quotidiens
+─────────────────────────────
+2. ANALYSE DE L'AUDIENCE
+─────────────────────────────
+En t'appuyant sur le profil ci-dessus :
+• ses problèmes quotidiens non résolus
 • pourquoi il/elle n'obtient pas de résultats
 • ce qui le/la pousserait à payer
 
-⸻
+─────────────────────────────
+3. POSITIONNEMENT
+─────────────────────────────
+• Une promesse claire en une phrase
+• Un angle facile à expliquer sur Instagram
+• Une différence nette avec les concurrents
 
-3. Analyse de la concurrence
+─────────────────────────────
+4. VALIDATION PAR LE CONTENU
+─────────────────────────────
+• Types de Reels à publier en priorité
+• Messages à mettre en avant
+• Indicateurs pour valider la demande
 
-Explique :
-• comment les concurrents se positionnent aujourd'hui
-• quels messages sont sur-utilisés
-• ce qui crée de la confusion ou de la méfiance chez l'audience
+─────────────────────────────
+5. PLAN D'ACTION
+─────────────────────────────
+• Niche recommandée + pourquoi en 2026
+• 3 idées de contenus immédiats
+• Première piste de monétisation
 
-⸻
-
-4. Opportunité de positionnement
-
-Propose un angle clair et simple :
-• une promesse compréhensible en une phrase
-• un positionnement facile à expliquer sur Instagram
-• une différence nette et crédible par rapport aux autres
-
-⸻
-
-5. Validation avec le contenu
-
-Explique comment tester cette niche sur Instagram :
-• quels types de Reels publier
-• quels messages mettre en avant
-• quels indicateurs analyser pour valider la demande
-
-⸻
-
-6. Synthèse et plan d'action
-• Donne la niche recommandée
-• pourquoi elle peut exploser en 2026
-• 3 idées de contenus à publier immédiatement
-• une piste simple pour monétiser
-
-Présente la réponse de manière claire, concrète et actionnable, comme si tu conseillais un entrepreneur débutant.`;
-    }
-    else if (currentTool === 'tab-bio') {
-      const cur = document.getElementById('bio-current').value;
-      p = `AUDIT DE TA BIO INSTAGRAM
-
-MA BIO ACTUELLE : ${cur ? `"${cur}"` : 'Pas encore de bio.'}
+Réponse claire, concrète et actionnable.`;
+  }
+  else if(tool==='bio'){
+    const cur=document.getElementById('b-cur').value.trim();
+    p=`Tu es un expert en copywriting Instagram.
 
 MON CLIENT IDÉAL :
-${ctx}
+${C}
 
-CONSIGNES :
-1. LIMITE ABSOLUE : 150 caractères maximum par variante
-2. Propose 3 variantes optimisées
-3. Chaque variante doit parler directement aux douleurs et motivations de mon client idéal
-4. Inclure un hook puissant en première ligne
-5. Rendre l'offre claire et irrésistible`;
-    }
-    else if (currentTool === 'tab-caption') {
-      const hook = document.getElementById('cap-hook-planned').value;
-      p = `Rédige des légendes Instagram pour des Reels, alignées à mon client idéal.
+MA BIO ACTUELLE :
+${cur?'"'+cur+'"':'(Pas encore de bio — crée-en une de zéro)'}
 
-MON CLIENT IDÉAL :
-${ctx}
+MISSION : Propose 3 variantes de bio optimisées.
 
-Hook vidéo : ${hook || 'À définir'}
-Ton : ${document.getElementById('cap-tone').value}
-Infos clés : ${document.getElementById('cap-infos').value}
-CTA : ${document.getElementById('cap-cta').value}
+CONTRAINTES :
+• 150 caractères maximum par variante
+• 1ère ligne = hook qui arrête le scroll
+• Bénéfice immédiatement visible
+• Résonance directe avec ces freins : ${F}
 
-Structure :
-Accroche : transition avec le hook vidéo "${hook}".
-Corps : phrases courtes, valeur réelle, résonance avec les freins et motivations du profil ci-dessus. Pas de séparateurs.
-Conclusion : CTA fluide aligné au profil.
-
-Contraintes : français Instagram, 150–300 mots, texte brut sans emojis.`;
-    }
-    else if (currentTool === 'tab-improve') {
-      p = `Tu es un expert en copywriting. Perfectionne cette légende Instagram.
+POUR CHAQUE VARIANTE :
+1. Texte final prêt à copier
+2. Pourquoi ça résonne avec ce profil
+3. À quel moment de son parcours lui montrer`;
+  }
+  else if(tool==='hooks'){
+    const topic=document.getElementById('h-topic').value.trim();
+    const angle=document.getElementById('h-angle').value;
+    const plat=document.getElementById('h-plat').value;
+    p=`Tu es un expert en hooks viraux pour ${plat}.
 
 MON CLIENT IDÉAL :
-${ctx}
+${C}
 
-LÉGENDE À OPTIMISER :
-"${document.getElementById('improve-text').value}"
+SUJET      : ${topic}
+ANGLE      : ${angle}
+PLATEFORME : ${plat}
 
-TON : ${document.getElementById('improve-tone').value}
-OBJECTIF : ${document.getElementById('improve-goal').value}
-
-CONSIGNES :
-1. Analyse les points faibles en regard de mon client idéal
-2. Réécris pour résonner avec ses douleurs et motivations réelles
-3. Si objectif AIDA : Attention, Intérêt, Désir, Action
-4. CTA aligné au profil
-5. 2 variantes en texte brut`;
-    }
-    else if (currentTool === 'tab-hooks') {
-      const topic    = document.getElementById('hook-topic').value;
-      const angle    = document.getElementById('hook-angle').value;
-      const platform = document.getElementById('hook-platform').value;
-      p = `Tu es un expert en copywriting de contenu court, spécialisé dans les hooks viraux pour ${platform}.
-
-MON CLIENT IDÉAL :
-${ctx}
-
-Sujet du contenu : ${topic}
-Angle principal : ${angle}
-
-Génère 10 hooks ultra-percutants pour ${platform} capables d'arrêter le scroll de mon client idéal.
-Chaque hook doit résonner avec au moins un de ces leviers : ${freinsStr}.
+MISSION : Génère 10 hooks ultra-percutants.
+Chaque hook doit résonner avec : ${F}.
 
 RÈGLES :
-• Max 1-2 lignes par hook
-• Pas de formules génériques
-• Varie : question directe, affirmation choc, contre-intuitif, chiffre concret, identification
+• Max 1-2 lignes
+• Zéro formule générique
+• Varie : question, affirmation choc, contre-intuitif, chiffre, identification
 
 POUR CHAQUE HOOK :
 1. Texte prêt à copier
 2. Levier psychologique utilisé
-3. Placement recommandé (1ère seconde / overlay / légende)
+3. Placement : 1ère seconde / overlay / légende
 
-BONUS : 3 meilleurs hooks avec explication pourquoi ils fonctionnent pour ce profil précis.`;
-    }
-    else if (currentTool === 'tab-reels') {
-      const theme  = document.getElementById('reel-theme').value;
-      const format = document.getElementById('reel-format').value;
-      const goal   = document.getElementById('reel-goal').value;
-      p = `Tu es un expert en stratégie de contenu viral sur Instagram.
+BONUS : 3 meilleurs hooks + pourquoi ils fonctionnent pour ce profil précis.`;
+  }
+  else if(tool==='caption'){
+    const hook=document.getElementById('c-hook').value.trim()||'À définir';
+    const tone=document.getElementById('c-tone').value;
+    const info=document.getElementById('c-infos').value.trim()||'Aucun';
+    const cta=document.getElementById('c-cta').value.trim()||'À définir';
+    p=`Tu es un expert en copywriting Instagram.
 
 MON CLIENT IDÉAL :
-${ctx}
+${C}
 
-Génère 5 idées de ${format} sur : "${theme}". Objectif : ${goal}.
-Chaque concept doit toucher directement les douleurs, rêves et croyances de mon client idéal.
+PARAMÈTRES :
+• Hook vidéo  : "${hook}"
+• Ton         : ${tone}
+• Infos       : ${info}
+• CTA         : ${cta}
+
+STRUCTURE :
+1. Accroche — transition fluide avec "${hook}"
+2. Corps — phrases courtes, valeur réelle, résonance avec : ${F}
+3. Conclusion — CTA naturel et non forcé
+
+CONTRAINTES :
+• Français authentique, style Instagram
+• 150 à 300 mots, texte brut sans emojis
+
+Propose 2 variantes avec des angles différents.`;
+  }
+  else if(tool==='improve'){
+    const text=document.getElementById('i-text').value.trim();
+    const goal=document.getElementById('i-goal').value;
+    const tone=document.getElementById('i-tone').value;
+    p=`Tu es un expert en copywriting. Perfectionne cette légende Instagram.
+
+MON CLIENT IDÉAL :
+${C}
+
+LÉGENDE ORIGINALE :
+"${text}"
+
+OBJECTIF : ${goal}
+TON      : ${tone}
+
+MISSION :
+1. Analyse les faiblesses en regard du client idéal
+2. Réécris pour maximiser la résonance avec : ${F}
+3. CTA clair et non intrusif
+4. 2 variantes texte brut, prêtes à copier`;
+  }
+  else if(tool==='reels'){
+    const theme=document.getElementById('r-theme').value.trim();
+    const fmt=document.getElementById('r-fmt').value;
+    const goal=document.getElementById('r-goal').value;
+    p=`Tu es un expert en stratégie de contenu viral Instagram.
+
+MON CLIENT IDÉAL :
+${C}
+
+THÉMATIQUE : "${theme}"
+FORMAT     : ${fmt}
+OBJECTIF   : ${goal}
+
+MISSION : Génère 5 idées de ${fmt} percutantes.
+Chaque concept exploite au moins un de ces leviers : ${F}.
 
 POUR CHAQUE IDÉE :
-1. Titre accrocheur
-2. Hook (overlay ou 1ère slide)
-3. Déroulement rapide
-4. Pourquoi ça résonne avec ce profil`;
-    }
-    else if (currentTool === 'tab-stories') {
-      const storyContext = document.getElementById('story-context').value;
-      const cta  = document.getElementById('story-cta-type').value;
-      const off  = document.getElementById('story-offer').value || 'Code Liberté';
-      p = `Écris en français. Ton intime, direct, adulte. Pas de bullet points, pas de tirets, pas de gras.
-Fragments, phrases nominales, suspensions "…", répétitions volontaires. Une idée par ligne.
+1. Hook d'ouverture (1ère seconde ou 1ère slide)
+2. Plan rapide en 3-5 points
+3. Pourquoi ça résonne avec ce profil
+4. CTA recommandé`;
+  }
+  else if(tool==='stories'){
+    const subj=document.getElementById('s-subj').value.trim()||'Se lancer dans le business en ligne';
+    const cta=document.getElementById('s-cta').value;
+    const offer=document.getElementById('s-offer').value.trim()||'Code Liberté';
+    p=`Écris en français. Ton intime, direct, adulte.
+Aucun bullet point, aucun tiret, aucun gras.
+Fragments, phrases nominales, suspensions "…". Une idée par ligne.
 
 MON CLIENT IDÉAL :
-${ctx}
+${C}
 
-Sujet : ${storyContext || 'Se lancer dans le business en ligne'}
-Offre : ${off}
-CTA : ${cta}
+SUJET   : ${subj}
+OFFRE   : ${offer}
+CTA     : ${cta}
 
-Logique narrative :
-1. Observe ce qu'elle fait sans la juger
-2. Nomme ce qu'elle croit qui lui manque — en t'appuyant sur ses freins réels : ${freinsStr}
+LOGIQUE NARRATIVE :
+1. Observe ce que fait ton client sans le juger
+2. Nomme ce qu'il/elle croit qu'il lui manque — freins réels : ${F}
 3. Retourne ça avec une vérité simple
-4. Ce qui change quand elle décide vraiment
+4. Ce qui change concrètement quand il/elle décide
 5. Question courte + CTA : "${cta}"
 
-3 variantes, angles différents, 5-8 lignes chacune. Texte brut, prêt à copier.`;
-    }
-
-    document.getElementById('promptOutput').textContent = p;
-    document.getElementById('promptOutput').className = 'code-mode';
-    isReadableMode = false;
-    document.getElementById('toggleModeBtn').textContent = 'Mode lecture';
-    createAIButtons();
-    spawnConfetti();
-    showScreen('stepResult', false);
+3 variantes, angles différents, 5-8 lignes chacune.
+Texte brut, prêt à copier directement.`;
   }
 
-  /* ── TOGGLE MODE ── */
-  function togglePromptMode() {
-    isReadableMode = !isReadableMode;
-    document.getElementById('promptOutput').className = isReadableMode ? 'readable-mode' : 'code-mode';
-    document.getElementById('toggleModeBtn').textContent = isReadableMode ? 'Mode code' : 'Mode lecture';
-  }
+  document.getElementById('pOut').textContent=p;
+  document.getElementById('pOut').className='mc';
+  rMode=false;
+  document.getElementById('tBtn').textContent='Mode lecture';
+  buildAI();
+  confetti();
+  setTimeout(()=>goTo('sR',false),700);
+}
 
-  /* ── AI BUTTONS ── */
-  function createAIButtons() {
-    document.getElementById('aiButtons').innerHTML = [
-      {n:'ChatGPT', u:'https://chat.openai.com/',      b:'#10a37f', i:'🤖'},
-      {n:'Claude',  u:'https://claude.ai/new',          b:'#d97757', i:'✦'},
-      {n:'Gemini',  u:'https://gemini.google.com/app',  b:'#4285f4', i:'✦'},
-      {n:'Copilot', u:'https://copilot.microsoft.com/', b:'#0078d4', i:'🪟'}
-    ].map(l=>`<button class="ai-btn" style="background:${l.b}" onclick="openAI('${l.u}')">${l.i} ${l.n}</button>`).join('');
-  }
-  function openAI(url) {
-    const txt = document.getElementById('promptOutput').textContent;
-    navigator.clipboard.writeText(txt).then(() => { showCopyFeedback(); setTimeout(()=>window.open(url,'_blank'),300); }).catch(()=>window.open(url,'_blank'));
-  }
-  function copyToClipboard() {
-    navigator.clipboard.writeText(document.getElementById('promptOutput').textContent).then(() => {
-      showCopyFeedback();
-      const btn = document.getElementById('copyBtn');
-      btn.textContent = '✅ Copié !';
-      setTimeout(()=>{ btn.textContent = '📋 Copier le prompt'; }, 2200);
-    });
-  }
-  function showCopyFeedback() {
-    const fb = document.getElementById('copyFeedback');
-    fb.classList.add('visible');
-    setTimeout(()=>fb.classList.remove('visible'), 3000);
-  }
+function copyP(){
+  navigator.clipboard.writeText(document.getElementById('pOut').textContent).then(()=>{
+    const fb=document.getElementById('cfb'),btn=document.getElementById('cpyBtn');
+    fb.classList.add('on');btn.textContent='✅ Copié !';
+    setTimeout(()=>{fb.classList.remove('on');btn.textContent='📋 Copier le prompt';},2500);
+  });
+}
 
-  /* ── CONFETTI ── */
-  function spawnConfetti() {
-    const wrap = document.getElementById('confettiWrap');
-    const cols = ['#C9A84C','#E8CC80','#10b981','#f59e0b','#ec4899'];
-    for (let i=0; i<14; i++) {
-      const el = document.createElement('div');
-      el.className = 'confetti-piece';
-      const size = 6 + Math.random()*6;
-      el.style.cssText = `left:${10+Math.random()*80}%;background:${cols[Math.floor(Math.random()*cols.length)]};animation-delay:${Math.random()*0.6}s;animation-duration:${0.9+Math.random()*0.7}s;width:${size}px;height:${size}px;border-radius:${Math.random()>0.5?'50%':'2px'};`;
-      wrap.appendChild(el);
-      setTimeout(()=>el.remove(), 2000);
-    }
-  }
+function buildAI(){
+  const ais=[
+    {n:'ChatGPT',u:'https://chat.openai.com/',     c:'#10a37f',i:'🤖'},
+    {n:'Claude', u:'https://claude.ai/new',         c:'#d97757',i:'✦'},
+    {n:'Gemini', u:'https://gemini.google.com/app', c:'#4285f4',i:'✦'},
+    {n:'Copilot',u:'https://copilot.microsoft.com/',c:'#0078d4',i:'🪟'},
+  ];
+  document.getElementById('aig').innerHTML=ais.map(a=>
+    `<button class="aibtn" style="background:${a.c}" onclick="openAI('${a.u}')">${a.i} ${a.n}</button>`
+  ).join('');
+}
 
-  /* ── INIT ── */
-  // Persona chargé via DOMContentLoaded dans la section INIT ci-dessus
+function openAI(url){
+  navigator.clipboard.writeText(document.getElementById('pOut').textContent)
+    .then(()=>setTimeout(()=>window.open(url,'_blank'),300))
+    .catch(()=>window.open(url,'_blank'));
+}
+
+function toggleMode(){
+  rMode=!rMode;
+  document.getElementById('pOut').className=rMode?'mr':'mc';
+  document.getElementById('tBtn').textContent=rMode?'Mode code':'Mode lecture';
+}
+
+function confetti(){
+  const wrap=document.getElementById('cwrap');
+  const cols=['#C9A84C','#E8CC80','#10b981','#f59e0b','#ec4899'];
+  for(let i=0;i<16;i++){
+    const el=document.createElement('div');
+    const s=5+Math.random()*7;
+    el.style.cssText=`position:absolute;left:${5+Math.random()*90}%;width:${s}px;height:${s}px;background:${cols[Math.floor(Math.random()*cols.length)]};border-radius:${Math.random()>.5?'50%':'3px'};animation:cDrop ${.9+Math.random()*.7}s ${Math.random()*.5}s ease forwards;top:0;pointer-events:none`;
+    wrap.style.position='relative';
+    wrap.appendChild(el);
+    setTimeout(()=>el.remove(),2000);
+  }
+}
 </script>
 </body>
 </html>
