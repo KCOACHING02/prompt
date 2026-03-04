@@ -436,56 +436,33 @@
 
     <div class="welcome-divider"></div>
 
+    <!-- Persona card -->
+    <!-- Persona défini -->
+    <div id="personaCard" style="display:none;background:var(--gold-pale);border:1.5px solid rgba(201,168,76,0.4);border-radius:14px;padding:14px 16px;margin-bottom:16px;width:100%">
+      <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;font-family:'DM Mono',monospace">✓ Client Idéal défini</div>
+      <div id="personaPreview" style="font-size:13px;color:var(--text);line-height:1.6"></div>
+      <div id="personaDate" style="font-size:11px;color:var(--text-light);margin-top:5px;font-family:'DM Mono',monospace"></div>
+    </div>
+
+    <!-- Pas de persona -->
+    <div id="noPersonaCard" style="display:none;background:rgba(201,168,76,0.1);border:1.5px dashed rgba(201,168,76,0.5);border-radius:14px;padding:18px 16px;margin-bottom:16px;width:100%;text-align:left">
+      <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold-light);margin-bottom:8px;font-family:'DM Mono',monospace">⚠ Client Idéal non défini</div>
+      <div style="font-size:13px;color:rgba(250,246,239,0.9);line-height:1.7;margin-bottom:8px">Le générateur personnalise chaque prompt en fonction de ton Client Idéal. Commence par remplir le quiz — ça prend 3 minutes.</div>
+      <div style="font-size:12px;color:rgba(201,168,76,0.75)">→ Tu seras redirigé(e) automatiquement.</div>
+    </div>
+
     <div class="welcome-actions">
-      <button class="restore-banner" id="restoreBanner" onclick="restoreSession()">
-        <strong>🔄 Reprendre là où tu t'es arrêtée</strong>
-        <span id="restorePreview"></span>
-      </button>
-      <button class="btn btn-welcome-primary" onclick="startApp()">Lancer le générateur ✨</button>
+      <button class="btn btn-welcome-primary" id="btnStart" onclick="startApp()">Lancer le générateur ✨</button>
+      <a href="client-ideal.html" id="btnDefinePersona" style="display:none;text-align:center;text-decoration:none" class="btn btn-welcome-outline">→ Définir mon Client Idéal d'abord</a>
       <a href="https://shop.beacons.ai/brilleetvibre/9cff3d0a-5313-4c90-9db5-7e6d5ec54309" class="btn btn-welcome-outline" target="_blank">Découvrir Code Liberté →</a>
     </div>
   </div>
 
-  <!-- ── AVATAR ── -->
-  <div class="screen" id="stepAvatar">
-    <label class="question-label">1. Qui est ton client idéal ?</label>
-    <span class="example-hint" onclick="fillExample('avatarClient','Femmes entrepreneurs de 30-45 ans qui veulent lancer leur business en ligne et quitter le salariat')">💡 Voir un exemple</span>
-    <div class="field-wrap">
-      <textarea id="avatarClient" placeholder="Ex : Femmes entrepreneurs de 30-45 ans qui lancent leur activité en ligne..." rows="5" maxlength="400" oninput="onAvatarInput()"></textarea>
-      <span class="char-count" id="avatarCount">0 / 400</span>
-    </div>
-    <div class="field-error" id="avatarError">⚠️ Décris ton client idéal en au moins 10 caractères.</div>
-    <button class="btn btn-primary" id="btnStepAvatar" onclick="goNext('stepOffer')" disabled>Suivant →</button>
-  </div>
-
-  <!-- ── OFFRE ── -->
-  <div class="screen" id="stepOffer">
-    <label class="question-label">2. Que vends-tu précisément ?</label>
-    <select id="offerType" onchange="validateStep('stepOffer')">
-      <option value="">Sélectionne ton type d'offre</option>
-      <option value="une Formation en ligne">Formation en ligne</option>
-      <option value="un Coaching">Coaching</option>
-      <option value="une Prestation">Prestation de service</option>
-      <option value="autre">Autre</option>
-    </select>
-    <div class="field-error" id="offerError">⚠️ Sélectionne un type d'offre.</div>
-    <button class="btn btn-primary" id="btnStepOffer" onclick="goNext('stepNiche')" disabled>Suivant →</button>
-    <button class="btn btn-outline" onclick="goBack('stepAvatar')">← Retour</button>
-  </div>
-
-  <!-- ── NICHE ── -->
-  <div class="screen" id="stepNiche">
-    <label class="question-label">3. Quelle est ta thématique / niche ?</label>
-    <span class="example-hint" onclick="fillExample('userNiche','Marketing digital & business en ligne')">💡 Voir un exemple</span>
-    <input type="text" id="userNiche" placeholder="Ex : Marketing digital, Yoga, Business en ligne..." oninput="validateStep('stepNiche')" style="margin-bottom:0">
-    <div class="field-error" id="nicheError">⚠️ Entre ta niche (minimum 3 caractères).</div>
-    <button class="btn btn-primary" id="btnStepNiche" onclick="goNext('stepToolSelect')" disabled style="margin-top:1rem">Suivant →</button>
-    <button class="btn btn-outline" onclick="goBack('stepOffer')">← Retour</button>
-  </div>
-
   <!-- ── CHOIX OUTIL ── -->
   <div class="screen" id="stepToolSelect">
-    <label class="question-label">4. Quel outil souhaites-tu utiliser ?</label>
+    <!-- Recap persona -->
+    <div id="personaRecap" style="background:var(--gold-pale);border:1.5px solid rgba(201,168,76,0.3);border-radius:12px;padding:11px 15px;margin-bottom:18px;font-size:13px;line-height:1.6;color:var(--text)"></div>
+    <label class="question-label">Quel outil souhaites-tu utiliser ?</label>
     <div class="tool-grid">
       <div class="tool-card" id="card-tab-niche-finder" onclick="pickTool('tab-niche-finder',this)"><span class="icon">🔍</span><span class="tool-name">Trouver ma Niche Business</span><div class="tool-check">✓</div></div>
       <div class="tool-card" id="card-tab-bio"          onclick="pickTool('tab-bio',this)">         <span class="icon">📝</span><span class="tool-name">Auditer ma Bio</span><div class="tool-check">✓</div></div>
@@ -495,7 +472,7 @@
       <div class="tool-card" id="card-tab-reels"        onclick="pickTool('tab-reels',this)">       <span class="icon">🎥</span><span class="tool-name">Idées Reels / Carrousel</span><div class="tool-check">✓</div></div>
       <div class="tool-card" id="card-tab-stories"      onclick="pickTool('tab-stories',this)">     <span class="icon">📱</span><span class="tool-name">Créer des Stories</span><div class="tool-check">✓</div></div>
     </div>
-    <button class="btn btn-outline" onclick="goBack('stepNiche')" style="margin-top:1.5rem">← Retour</button>
+    <button class="btn btn-outline" onclick="goBack('welcomeScreen')" style="margin-top:1.5rem">← Retour</button>
   </div>
 
   <!-- ── CONFIG OUTIL ── -->
@@ -605,7 +582,66 @@
 <script>
   let currentTool = '';
   let isReadableMode = false;
-  const SCREENS = ['welcomeScreen','stepAvatar','stepOffer','stepNiche','stepToolSelect','stepConfig','stepResult'];
+  let persona = null; // chargé depuis localStorage bv_persona
+
+  const SCREENS = ['welcomeScreen','stepToolSelect','stepConfig','stepResult'];
+
+  /* ── PERSONA ── */
+  function loadPersona() {
+    try {
+      const raw = localStorage.getItem('bv_persona');
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch(e) { return null; }
+  }
+
+  function buildPersonaContext(p) {
+    // Construit un texte riche à injecter dans les prompts
+    const parts = [];
+    parts.push(`Situation : ${p.situation}`);
+    if (p.motivations && p.motivations.length) parts.push(`Motivations principales : ${p.motivations.join(', ')}`);
+    if (p.freins && p.freins.length) parts.push(`Freins identifiés : ${p.freins.join(', ')}`);
+    if (p.croyances && p.croyances.length) parts.push(`Croyances limitantes : ${p.croyances.join(', ')}`);
+    if (p.ressentis && p.ressentis.length) parts.push(`Ressenti quotidien : ${p.ressentis.join(', ')}`);
+    if (p.visions && p.visions.length) parts.push(`Transformation désirée : ${p.visions.join(', ')}`);
+    if (p.strategie) parts.push(`Angle de contenu recommandé : ${p.strategie}`);
+    return parts.join('\n');
+  }
+
+  function buildAvatarSummary(p) {
+    // Résumé court pour la strip recap
+    const mots = [p.situation];
+    if (p.motivations && p.motivations[0]) mots.push(p.motivations[0]);
+    return mots.join(' · ');
+  }
+
+  /* ── INIT ── */
+  document.addEventListener('DOMContentLoaded', () => {
+    persona = loadPersona();
+    if (persona) {
+      // Afficher la card persona
+      document.getElementById('personaCard').style.display = 'block';
+      document.getElementById('personaPreview').textContent =
+        `${persona.nom} · ${persona.situation}` +
+        (persona.motivations && persona.motivations[0] ? ` · ${persona.motivations[0]}` : '');
+      document.getElementById('personaDate').textContent =
+        'Défini le ' + new Date(persona.ts).toLocaleDateString('fr-FR',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
+      document.getElementById('btnStart').style.display = 'block';
+      // Pré-remplir le recap dans stepToolSelect
+      document.getElementById('personaRecap').innerHTML =
+        `<span style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-family:'DM Mono',monospace;display:block;margin-bottom:6px">✓ Client Idéal chargé</span>` +
+        `<strong>${persona.nom}</strong> — ${persona.situation}` +
+        (persona.motivations && persona.motivations.length ? `<br><span style="color:var(--text-light);font-size:12px">${persona.motivations.slice(0,2).join(' · ')}</span>` : '');
+    } else {
+      // Pas de persona : montrer l'invitation et le bouton dédié
+      document.getElementById('noPersonaCard').style.display = 'block';
+      document.getElementById('btnStart').style.display = 'none';
+      const btnDef = document.getElementById('btnDefinePersona');
+      btnDef.style.display = 'block';
+      btnDef.className = 'btn btn-welcome-primary';
+      btnDef.style.textAlign = 'center';
+    }
+  });
 
   /* ── NAVIGATION ── */
   function showScreen(id, back) {
@@ -616,11 +652,13 @@
     if (back) next.classList.add('back');
     next.classList.add('active');
     updateProgress(id);
-    updateRecap(id);
+    updateRecapStrip(id);
     window.scrollTo(0,0);
   }
-  function startApp() { showScreen('stepAvatar', false); }
-  function goNext(id) { showScreen(id, false); saveSession(); }
+  function startApp() {
+    if (!persona) { window.location.href = 'client-ideal.html'; return; }
+    showScreen('stepToolSelect', false);
+  }
   function goBack(id) { showScreen(id, true); }
 
   function updateProgress(id) {
@@ -629,35 +667,17 @@
     document.getElementById('progressBar').style.display = id === 'welcomeScreen' ? 'none' : 'block';
   }
 
-  /* ── RECAP ── */
-  function updateRecap(id) {
+  function updateRecapStrip(id) {
     const strip = document.getElementById('recapStrip');
-    if (!['stepToolSelect','stepConfig','stepResult'].includes(id)) { strip.classList.remove('visible'); return; }
-    const niche  = (document.getElementById('userNiche').value || '').trim();
-    const offer  = document.getElementById('offerType').value;
-    const avatar = (document.getElementById('avatarClient').value || '').trim();
-    const chips  = [];
-    if (niche)  chips.push(niche);
-    if (offer)  chips.push(offer);
-    if (avatar) chips.push(avatar.length > 35 ? avatar.slice(0,35)+'…' : avatar);
+    if (!persona || !['stepToolSelect','stepConfig','stepResult'].includes(id)) { strip.classList.remove('visible'); return; }
+    const chips = [persona.situation];
+    if (persona.motivations && persona.motivations[0]) chips.push(persona.motivations[0]);
+    if (persona.strategie) chips.push(persona.strategie);
     strip.innerHTML = chips.map(c => `<div class="recap-chip">${c}</div>`).join('');
-    strip.classList.toggle('visible', chips.length > 0);
+    strip.classList.add('visible');
   }
 
-  /* ── VALIDATION ── */
-  function onAvatarInput() {
-    const val = document.getElementById('avatarClient').value;
-    const el  = document.getElementById('avatarCount');
-    el.textContent = val.length + ' / 400';
-    el.classList.toggle('warn', val.length > 360);
-    document.getElementById('btnStepAvatar').disabled = val.trim().length < 10;
-  }
-  function validateStep(step) {
-    let ok = false;
-    if (step === 'stepOffer') ok = document.getElementById('offerType').value !== '';
-    if (step === 'stepNiche') ok = document.getElementById('userNiche').value.trim().length > 2;
-    document.getElementById('btn'+step.charAt(0).toUpperCase()+step.slice(1)).disabled = !ok;
-  }
+  /* ── VALIDATION CONFIG ── */
   function validateConfig() {
     const checks = {
       'tab-hooks':   () => document.getElementById('hook-topic').value.trim().length > 2,
@@ -667,13 +687,6 @@
     const ok = !checks[currentTool] || checks[currentTool]();
     document.getElementById('configError').classList.toggle('visible', !ok);
     return ok;
-  }
-
-  /* ── EXAMPLES ── */
-  function fillExample(id, val) {
-    document.getElementById(id).value = val;
-    if (id === 'avatarClient') onAvatarInput();
-    if (id === 'userNiche') validateStep('stepNiche');
   }
 
   /* ── TOOL PICK ── */
@@ -691,57 +704,17 @@
     const v = document.getElementById('hookLibrary').value;
     if (v) document.getElementById('hook-topic').value = v;
   }
-
-  /* ── SESSION ── */
-  function saveSession() {
-    try {
-      localStorage.setItem('bv_session', JSON.stringify({
-        avatar: document.getElementById('avatarClient').value,
-        offer:  document.getElementById('offerType').value,
-        niche:  document.getElementById('userNiche').value,
-        ts: Date.now()
-      }));
-    } catch(e) {}
-  }
-  function loadSession() {
-    try {
-      const raw = localStorage.getItem('bv_session');
-      if (!raw) return;
-      const d = JSON.parse(raw);
-      if (Date.now() - d.ts > 86400000) { localStorage.removeItem('bv_session'); return; }
-      if (!d.avatar && !d.niche) return;
-      const banner = document.getElementById('restoreBanner');
-      document.getElementById('restorePreview').textContent =
-        (d.niche || d.offer || 'Données') + ' — ' +
-        new Date(d.ts).toLocaleDateString('fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
-      banner.style.display = 'block';
-      banner._data = d;
-    } catch(e) {}
-  }
-  function restoreSession() {
-    const d = document.getElementById('restoreBanner')._data;
-    if (!d) return;
-    document.getElementById('avatarClient').value = d.avatar || '';
-    document.getElementById('offerType').value    = d.offer  || '';
-    document.getElementById('userNiche').value    = d.niche  || '';
-    onAvatarInput();
-    validateStep('stepOffer');
-    validateStep('stepNiche');
-    showScreen('stepToolSelect', false);
-  }
   function resetAll() {
-    try { localStorage.removeItem('bv_session'); } catch(e) {}
-    location.reload();
+    showScreen('welcomeScreen', true);
   }
 
   /* ── GENERATE ── */
   function generateNow() {
     if (!validateConfig()) return;
-    const u = {
-      avatar: document.getElementById('avatarClient').value,
-      offer:  document.getElementById('offerType').value,
-      niche:  document.getElementById('userNiche').value
-    };
+    const ctx = persona ? buildPersonaContext(persona) : 'Client idéal non défini';
+    const freinsStr = persona && persona.freins && persona.freins.length
+      ? persona.freins.slice(0,2).join(', ')
+      : 'ses freins émotionnels';
     let p = '';
 
     if (currentTool === 'tab-niche-finder') {
@@ -749,13 +722,14 @@
       const wants  = document.getElementById('diag-wants').value;
       p = `Agis comme un expert en stratégie business et en positionnement, spécialisé dans la création de business basés sur le contenu et Instagram en 2026.
 
-MON PROFIL UTILISATEUR (Diagnostic) :
+MON CLIENT IDÉAL :
+${ctx}
+
+MON PROFIL PERSONNEL :
 - Mes compétences et expériences : ${skills}
 - Ce que je souhaite et mes centres d'intérêt : ${wants}
 
-Ton objectif est de m'aider à identifier une niche claire, rentable et durable, avec un potentiel de croissance élevé (jusqu'à 6 chiffres), même avec une audience encore petite, en te basant sur mon diagnostic ci-dessus.
-
-Utilise une réflexion stratégique complète, pas une idée vague.
+Aide-moi à identifier une niche claire, rentable et durable en tenant compte à la fois de mon profil ET du client idéal décrit ci-dessus.
 
 ⸻
 
@@ -766,17 +740,14 @@ Identifie des domaines :
 • où les gens paient déjà pour résoudre ce problème
 • et où l'offre actuelle est mal expliquée, trop complexe ou mal positionnée
 
-Explique pourquoi ces domaines ont un fort potentiel en 2026.
-
 ⸻
 
 2. Analyse de l'audience
 
-Décris précisément :
-• qui est l'audience cible
-• les problèmes qu'elle essaie de résoudre au quotidien
-• pourquoi elle n'obtient pas encore de résultats
-• et ce qui la pousserait à passer à l'action et à payer
+En t'appuyant sur le profil de mon client idéal :
+• ses problèmes quotidiens
+• pourquoi il/elle n'obtient pas de résultats
+• ce qui le/la pousserait à payer
 
 ⸻
 
@@ -817,46 +788,57 @@ Présente la réponse de manière claire, concrète et actionnable, comme si tu 
     }
     else if (currentTool === 'tab-bio') {
       const cur = document.getElementById('bio-current').value;
-      p = `PROMPT AUDIT DE TA BIO\n\nMA BIO ACTUELLE : ${cur ? `"${cur}"` : 'Je n\'ai pas encore de bio.'}\nMON PROFIL :\n- Client idéal : ${u.avatar}\n- Niche : ${u.niche}\n- Offre : ${u.offer}\n\nCONSIGNES :\n1. LIMITE ABSOLUE : 150 caractères maximum\n2. Propose 3 variantes optimisées\n3. Chaque variante doit convertir les visiteurs en abonnés puis en clients\n4. Inclure un hook puissant dans la première ligne\n5. Rendre l'offre irrésistible et claire`;
+      p = `AUDIT DE TA BIO INSTAGRAM
+
+MA BIO ACTUELLE : ${cur ? `"${cur}"` : 'Pas encore de bio.'}
+
+MON CLIENT IDÉAL :
+${ctx}
+
+CONSIGNES :
+1. LIMITE ABSOLUE : 150 caractères maximum par variante
+2. Propose 3 variantes optimisées
+3. Chaque variante doit parler directement aux douleurs et motivations de mon client idéal
+4. Inclure un hook puissant en première ligne
+5. Rendre l'offre claire et irrésistible`;
     }
     else if (currentTool === 'tab-caption') {
       const hook = document.getElementById('cap-hook-planned').value;
-      p = `Rédige des légendes Instagram personnalisées pour des reels, alignées à ma voix, mon offre et mes objectifs d'entrepreneur.
+      p = `Rédige des légendes Instagram pour des Reels, alignées à mon client idéal.
 
-Niche/secteur d'activité : ${u.niche}
-Cible idéale (public visé) : ${u.avatar}
-Hook (Accroche vidéo) : ${hook || 'À définir'}
-Ton souhaité : ${document.getElementById('cap-tone').value}
-Infos clés à intégrer : ${document.getElementById('cap-infos').value}
-Action recherchée (CTA) : ${document.getElementById('cap-cta').value}
+MON CLIENT IDÉAL :
+${ctx}
 
-Structure imposée :
-Accroche : Une phrase courte, puissante, faisant transition avec le hook vidéo : "${hook}".
-Corps : Paragraphes développés, phrases courtes, vraie valeur ajoutée. Pas de séparateurs.
-Conclusion : CTA personnalisé, fluide, aligné à l'objectif business.
+Hook vidéo : ${hook || 'À définir'}
+Ton : ${document.getElementById('cap-tone').value}
+Infos clés : ${document.getElementById('cap-infos').value}
+CTA : ${document.getElementById('cap-cta').value}
 
-Contraintes : Français courant Instagram. 150 à 300 mots. Texte brut, pas d'emojis. Offre : "${u.offer}".`;
+Structure :
+Accroche : transition avec le hook vidéo "${hook}".
+Corps : phrases courtes, valeur réelle, résonance avec les freins et motivations du profil ci-dessus. Pas de séparateurs.
+Conclusion : CTA fluide aligné au profil.
+
+Contraintes : français Instagram, 150–300 mots, texte brut sans emojis.`;
     }
     else if (currentTool === 'tab-improve') {
-      p = `Tu es un expert en Copywriting. Ta mission est de perfectionner la légende Instagram suivante.
+      p = `Tu es un expert en copywriting. Perfectionne cette légende Instagram.
 
-PROFIL BUSINESS :
-- Client idéal : ${u.avatar}
-- Niche : ${u.niche}
-- Mon offre : ${u.offer}
+MON CLIENT IDÉAL :
+${ctx}
 
 LÉGENDE À OPTIMISER :
 "${document.getElementById('improve-text').value}"
 
-TON SOUHAITÉ : ${document.getElementById('improve-tone').value}
+TON : ${document.getElementById('improve-tone').value}
 OBJECTIF : ${document.getElementById('improve-goal').value}
 
 CONSIGNES :
-1. Analyse la structure actuelle et identifie les points faibles.
-2. Réécris la légende pour la rendre plus percutante selon l'objectif choisi.
-3. Si l'objectif est AIDA, respecte strictement : Attention, Intérêt, Désir, Action.
-4. Assure-toi que l'appel à l'action est aligné avec mon offre.
-5. Propose 2 variantes optimisées en texte brut sans emojis superflus.`;
+1. Analyse les points faibles en regard de mon client idéal
+2. Réécris pour résonner avec ses douleurs et motivations réelles
+3. Si objectif AIDA : Attention, Intérêt, Désir, Action
+4. CTA aligné au profil
+5. 2 variantes en texte brut`;
     }
     else if (currentTool === 'tab-hooks') {
       const topic    = document.getElementById('hook-topic').value;
@@ -864,66 +846,67 @@ CONSIGNES :
       const platform = document.getElementById('hook-platform').value;
       p = `Tu es un expert en copywriting de contenu court, spécialisé dans les hooks viraux pour ${platform}.
 
-MON PROFIL :
-- Niche : ${u.niche}
-- Client idéal : ${u.avatar}
-- Mon offre : ${u.offer}
-- Sujet du contenu : ${topic}
-- Angle principal : ${angle}
+MON CLIENT IDÉAL :
+${ctx}
 
-TA MISSION :
-Génère 10 hooks ultra-percutants, directement utilisables sur ${platform}, capables d'arrêter le scroll et de donner immédiatement envie de regarder la suite.
+Sujet du contenu : ${topic}
+Angle principal : ${angle}
 
-RÈGLES ABSOLUES :
-• Chaque hook fait maximum 1 à 2 lignes
-• Pas de ponctuation inutile ni de majuscules partout
-• Le hook doit parler directement à la douleur, la curiosité ou l'ambition de mon avatar
-• Pas de formules génériques ou vues partout
-• Certains hooks peuvent être en rupture grammaticale volontaire — c'est efficace
-• Varie les styles : question directe, affirmation choc, contre-intuitif, chiffre concret, identification immédiate
+Génère 10 hooks ultra-percutants pour ${platform} capables d'arrêter le scroll de mon client idéal.
+Chaque hook doit résonner avec au moins un de ces leviers : ${freinsStr}.
 
-POUR CHAQUE HOOK, DONNE :
-1. Le texte du hook (prêt à copier-coller)
-2. Le levier psychologique utilisé (ex : FOMO, curiosité, douleur, preuve sociale…)
-3. Une indication sur où le placer (1ère seconde vidéo / texte overlay / légende)
+RÈGLES :
+• Max 1-2 lignes par hook
+• Pas de formules génériques
+• Varie : question directe, affirmation choc, contre-intuitif, chiffre concret, identification
 
-BONUS : Termine par les 3 meilleurs hooks de la liste, avec une explication de pourquoi ils sont les plus puissants pour mon avatar.`;
+POUR CHAQUE HOOK :
+1. Texte prêt à copier
+2. Levier psychologique utilisé
+3. Placement recommandé (1ère seconde / overlay / légende)
+
+BONUS : 3 meilleurs hooks avec explication pourquoi ils fonctionnent pour ce profil précis.`;
     }
     else if (currentTool === 'tab-reels') {
       const theme  = document.getElementById('reel-theme').value;
       const format = document.getElementById('reel-format').value;
       const goal   = document.getElementById('reel-goal').value;
-      p = `Tu es un expert en stratégie de contenu viral sur Instagram et LinkedIn.\nVoici mon profil :\n- Ma niche : ${u.niche}\n- Mon client idéal : ${u.avatar}\n- Mon offre : ${u.offer}\n\nMISSION :\nGénère 5 idées de concepts de ${format} sur la thématique : "${theme}".\nL'objectif principal est : ${goal}.\n\nPOUR CHAQUE IDÉE, FOURNIS :\n1. Un titre accrocheur pour le concept.\n2. Le Hook à mettre en gros sur la vidéo ou la 1ère slide.\n3. Le déroulement rapide.\n4. Pourquoi ce concept va fonctionner pour mon avatar.`;
+      p = `Tu es un expert en stratégie de contenu viral sur Instagram.
+
+MON CLIENT IDÉAL :
+${ctx}
+
+Génère 5 idées de ${format} sur : "${theme}". Objectif : ${goal}.
+Chaque concept doit toucher directement les douleurs, rêves et croyances de mon client idéal.
+
+POUR CHAQUE IDÉE :
+1. Titre accrocheur
+2. Hook (overlay ou 1ère slide)
+3. Déroulement rapide
+4. Pourquoi ça résonne avec ce profil`;
     }
     else if (currentTool === 'tab-stories') {
-      const ctx  = document.getElementById('story-context').value;
+      const storyContext = document.getElementById('story-context').value;
       const cta  = document.getElementById('story-cta-type').value;
-      const off  = document.getElementById('story-offer').value || u.offer;
-      p = `Tu t'adresses à quelqu'un qui veut se lancer dans le marketing digital mais qui hésite encore — elle regarde, elle attend, elle doute.
+      const off  = document.getElementById('story-offer').value || 'Code Liberté';
+      p = `Écris en français. Ton intime, direct, adulte. Pas de bullet points, pas de tirets, pas de gras.
+Fragments, phrases nominales, suspensions "…", répétitions volontaires. Une idée par ligne.
 
-Écris en français. Ton intime, direct, adulte. Pas de bullet points, pas de tirets, pas de gras.
+MON CLIENT IDÉAL :
+${ctx}
 
-Utilise des fragments, des phrases nominales, des suspensions avec "…", des répétitions volontaires. Le rythme vient de la rupture grammaticale et des sauts de ligne. Chaque ligne pose une seule idée. Certaines lignes sont très courtes. C'est voulu.
+Sujet : ${storyContext || 'Se lancer dans le business en ligne'}
+Offre : ${off}
+CTA : ${cta}
 
-MON PROFIL :
-- Niche : ${u.niche}
-- Client idéal : ${u.avatar}
-- Sujet de la story : ${ctx || 'Se lancer dans le business en ligne'}
-- Mon offre : ${off}
-- CTA souhaité : ${cta}
-
-Suis cette logique :
-1. Observe ce qu'elle fait, sans la juger
-2. Nomme ce qu'elle croit qui lui manque
+Logique narrative :
+1. Observe ce qu'elle fait sans la juger
+2. Nomme ce qu'elle croit qui lui manque — en t'appuyant sur ses freins réels : ${freinsStr}
 3. Retourne ça avec une vérité simple
-4. Dis ce qui change quand elle décide vraiment
-5. Termine par une question courte suivie du CTA : "${cta}"
+4. Ce qui change quand elle décide vraiment
+5. Question courte + CTA : "${cta}"
 
-Pas de promesse floue. On crée une décision, pas une émotion.
-
-Génère 3 variantes de story avec ce style, chacune abordant un angle différent autour du sujet : "${ctx || 'Se lancer'}".
-Chaque variante doit tenir en 5 à 8 lignes maximum — pensée pour un format story vertical.
-Texte brut, prêt à copier-coller.`;
+3 variantes, angles différents, 5-8 lignes chacune. Texte brut, prêt à copier.`;
     }
 
     document.getElementById('promptOutput').textContent = p;
@@ -933,7 +916,6 @@ Texte brut, prêt à copier-coller.`;
     createAIButtons();
     spawnConfetti();
     showScreen('stepResult', false);
-    saveSession();
   }
 
   /* ── TOGGLE MODE ── */
@@ -985,7 +967,7 @@ Texte brut, prêt à copier-coller.`;
   }
 
   /* ── INIT ── */
-  document.addEventListener('DOMContentLoaded', loadSession);
+  // Persona chargé via DOMContentLoaded dans la section INIT ci-dessus
 </script>
 </body>
 </html>
