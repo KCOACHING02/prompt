@@ -452,8 +452,8 @@
     </div>
 
     <div class="welcome-actions">
-      <button class="btn btn-welcome-primary" id="btnStart" onclick="startApp()">Lancer le générateur ✨</button>
-      <a href="client-ideal.html" id="btnDefinePersona" style="display:none;text-align:center;text-decoration:none" class="btn btn-welcome-outline">→ Définir mon Client Idéal d'abord</a>
+      <button class="btn btn-welcome-primary" id="btnStart" onclick="startApp()" style="display:none">Lancer le générateur ✨</button>
+      <a href="https://kcoaching02.github.io/BAO_PERSONA/" id="btnDefinePersona" style="display:none;text-align:center;text-decoration:none" class="btn btn-welcome-outline">→ Définir mon Client Idéal d'abord</a>
       <a href="https://shop.beacons.ai/brilleetvibre/9cff3d0a-5313-4c90-9db5-7e6d5ec54309" class="btn btn-welcome-outline" target="_blank">Découvrir Code Liberté →</a>
     </div>
   </div>
@@ -656,7 +656,7 @@
     window.scrollTo(0,0);
   }
   function startApp() {
-    if (!persona) { window.location.href = 'client-ideal.html'; return; }
+    if (!persona) { window.location.href = 'https://kcoaching02.github.io/BAO_PERSONA/'; return; }
     showScreen('stepToolSelect', false);
   }
   function goBack(id) { showScreen(id, true); }
@@ -711,8 +711,9 @@
   /* ── GENERATE ── */
   function generateNow() {
     if (!validateConfig()) return;
-    const ctx = persona ? buildPersonaContext(persona) : 'Client idéal non défini';
-    const freinsStr = persona && persona.freins && persona.freins.length
+    if (!persona) { window.location.href = 'https://kcoaching02.github.io/BAO_PERSONA/'; return; }
+    const ctx = buildPersonaContext(persona);
+    const freinsStr = persona.freins && persona.freins.length
       ? persona.freins.slice(0,2).join(', ')
       : 'ses freins émotionnels';
     let p = '';
