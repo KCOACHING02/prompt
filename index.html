@@ -390,6 +390,19 @@ let persona=null, tool='', rMode=false;
 const PG={sW:0,sT:33,sC:66,sR:100};
 
 document.addEventListener('DOMContentLoaded',()=>{
+  // 1. Lire le persona depuis l'URL (?p=...) si transmis depuis le quiz
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const encoded = params.get('p');
+    if (encoded) {
+      const decoded = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+      localStorage.setItem('bv_persona', JSON.stringify(decoded));
+      // Nettoyer l'URL sans recharger la page
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  } catch(e) {}
+
+  // 2. Charger depuis localStorage (qu'il vienne de l'URL ou d'une session précédente)
   try{ const r=localStorage.getItem('bv_persona'); if(r) persona=JSON.parse(r); }catch(e){}
   if(persona){
     document.getElementById('pOk').style.display='block';
